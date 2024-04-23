@@ -475,29 +475,29 @@ namespace WebApi.Controllers
             }
         }
         [HttpPost]
-        public HttpResponseMessage MakeAnnouncement(string Description)
-        {
-            try
-            {
-                List<User> user = db.Users.ToList();
-                for (int i = 0;i < user.Count; i++)
-                {
-                    Notification notification = new Notification();
-                    notification.date = DateTime.Today;
-                    notification.time = DateTime.Now.TimeOfDay;
-                    notification.userrole = user[i].role;
-                    notification.type = "announcement";
-                    notification.description = Description;
-                    notification.user_id = user[i].id;
-                    db.Notifications.Add(notification);
-                    db.SaveChanges();
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, "All Users Notified");
-            }
-            catch
-            {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
-            }
-        }
+        //public HttpResponseMessage MakeAnnouncement(string Description)
+        //{
+        //    try
+        //    {
+        //        List<User> user = db.Users.ToList();
+        //        for (int i = 0;i < user.Count; i++)
+        //        {
+        //            Notification notification = new Notification();
+        //            notification.date = DateTime.Today;
+        //            notification.time = DateTime.Now.TimeOfDay;
+        //            notification.userrole = user[i].role;
+        //            notification.type = "announcement";
+        //            notification.description = Description;
+        //            notification.user_id = user[i].id;
+        //            db.Notifications.Add(notification);
+        //            db.SaveChanges();
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, "All Users Notified");
+        //    }
+        //    catch
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+        //    }
+        //}
     }
 }
