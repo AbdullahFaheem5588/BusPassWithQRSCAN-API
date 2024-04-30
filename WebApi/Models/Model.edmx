@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="BusPassWithQRCodeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="BusPassWithQRScanModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Admin">
           <Key>
             <PropertyRef Name="id" />
@@ -17,25 +17,12 @@
         </EntityType>
         <EntityType Name="Bus">
           <Key>
-            <PropertyRef Name="busno" />
-          </Key>
-          <Property Name="busno" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="regno" Type="varchar" MaxLength="70" />
-          <Property Name="totalSeats" Type="int" />
-          <Property Name="route_id" Type="int" />
-          <Property Name="conductor_id" Type="int" />
-        </EntityType>
-        <EntityType Name="BusHistory">
-          <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="date" Type="date" />
-          <Property Name="time" Type="time" Precision="7" />
-          <Property Name="BookedSeats" Type="int" />
-          <Property Name="latitude" Type="varchar(max)" />
-          <Property Name="longitude" Type="varchar(max)" />
-          <Property Name="bus_busno" Type="int" />
+          <Property Name="regno" Type="varchar" MaxLength="70" />
+          <Property Name="totalSeats" Type="int" />
+          <Property Name="conductor_id" Type="int" />
         </EntityType>
         <EntityType Name="Conductor">
           <Key>
@@ -52,10 +39,17 @@
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="stop_id" Type="int" />
-          <Property Name="student_passid" Type="int" />
-          <Property Name="notification" Type="int" />
+          <Property Name="student_id" Type="int" />
         </EntityType>
-        <EntityType Name="Notification">
+        <EntityType Name="IsAssigned">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="bus_id" Type="int" />
+          <Property Name="route_id" Type="int" />
+        </EntityType>
+        <EntityType Name="Notifications">
           <Key>
             <PropertyRef Name="id" />
           </Key>
@@ -74,8 +68,29 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="100" />
           <Property Name="contact" Type="varchar" MaxLength="80" />
-          <Property Name="childrenEnroll" Type="int" />
+          <Property Name="childrenenroll" Type="int" />
           <Property Name="user_id" Type="int" />
+        </EntityType>
+        <EntityType Name="Pass">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="status" Type="varchar" MaxLength="10" />
+          <Property Name="passexpiry" Type="date" />
+          <Property Name="totaljourneys" Type="int" />
+          <Property Name="remainingjourneys" Type="int" />
+        </EntityType>
+        <EntityType Name="Reaches">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="date" />
+          <Property Name="time" Type="time" Precision="7" />
+          <Property Name="bus_id" Type="int" />
+          <Property Name="route_id" Type="int" />
+          <Property Name="stop_id" Type="int" />
         </EntityType>
         <EntityType Name="Route">
           <Key>
@@ -89,38 +104,56 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="stoptiming" Type="time" Precision="7" />
+          <Property Name="eststoptiming" Type="time" Precision="7" />
           <Property Name="route_id" Type="int" />
           <Property Name="stop_id" Type="int" />
+        </EntityType>
+        <EntityType Name="Starts">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="date" />
+          <Property Name="time" Type="time" Precision="7" />
+          <Property Name="bus_id" Type="int" />
+          <Property Name="route_id" Type="int" />
         </EntityType>
         <EntityType Name="Stops">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="stopno" Type="int" />
           <Property Name="name" Type="varchar" MaxLength="150" />
-          <Property Name="pickup" Type="time" Precision="7" />
-          <Property Name="dropup" Type="time" Precision="7" />
           <Property Name="latitude" Type="varchar(max)" />
           <Property Name="longitude" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Student">
           <Key>
-            <PropertyRef Name="passid" />
+            <PropertyRef Name="id" />
           </Key>
-          <Property Name="passid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="100" />
           <Property Name="gender" Type="varchar" MaxLength="50" />
           <Property Name="regno" Type="varchar" MaxLength="100" />
           <Property Name="contact" Type="varchar" MaxLength="80" />
-          <Property Name="qrcode" Type="varchar" MaxLength="80" />
-          <Property Name="totalJourney" Type="int" />
-          <Property Name="remainingJourney" Type="int" />
-          <Property Name="passExpiray" Type="date" />
           <Property Name="parent_id" Type="int" />
           <Property Name="user_id" Type="int" />
+          <Property Name="pass_id" Type="int" />
         </EntityType>
-        <EntityType Name="StudentHistory">
+        <EntityType Name="TracksLocation">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="date" />
+          <Property Name="time" Type="time" Precision="7" />
+          <Property Name="latitude" Type="varchar(max)" />
+          <Property Name="longitude" Type="varchar(max)" />
+          <Property Name="bus_id" Type="int" />
+          <Property Name="route_id" Type="int" />
+        </EntityType>
+        <EntityType Name="Travels">
           <Key>
             <PropertyRef Name="id" />
           </Key>
@@ -128,8 +161,10 @@
           <Property Name="date" Type="date" />
           <Property Name="time" Type="time" Precision="7" />
           <Property Name="type" Type="varchar" MaxLength="100" />
-          <Property Name="student_passid" Type="int" />
-          <Property Name="bus_busno" Type="int" />
+          <Property Name="pass_id" Type="int" />
+          <Property Name="student_id" Type="int" />
+          <Property Name="bus_id" Type="int" />
+          <Property Name="route_id" Type="int" />
           <Property Name="stop_id" Type="int" />
         </EntityType>
         <EntityType Name="Users">
@@ -141,7 +176,7 @@
           <Property Name="password" Type="varchar" MaxLength="100" />
           <Property Name="role" Type="varchar" MaxLength="50" />
         </EntityType>
-        <Association Name="FK__Admin__user_id__38996AB5">
+        <Association Name="FK__Admin__user_id__44FF419A">
           <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
           <End Role="Admin" Type="Self.Admin" Multiplicity="*" />
           <ReferentialConstraint>
@@ -153,7 +188,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Bus__conductor_i__47DBAE45">
+        <Association Name="FK__Bus__conductor_i__5070F446">
           <End Role="Conductor" Type="Self.Conductor" Multiplicity="0..1" />
           <End Role="Bus" Type="Self.Bus" Multiplicity="*" />
           <ReferentialConstraint>
@@ -162,30 +197,6 @@
             </Principal>
             <Dependent Role="Bus">
               <PropertyRef Name="conductor_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Bus__route_id__46E78A0C">
-          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
-          <End Role="Bus" Type="Self.Bus" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Route">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="Bus">
-              <PropertyRef Name="route_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__BusHistor__bus_b__5CD6CB2B">
-          <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
-          <End Role="BusHistory" Type="Self.BusHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Bus">
-              <PropertyRef Name="busno" />
-            </Principal>
-            <Dependent Role="BusHistory">
-              <PropertyRef Name="bus_busno" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -218,26 +229,50 @@
           <End Role="FavouriteStops" Type="Self.FavouriteStops" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Student">
-              <PropertyRef Name="passid" />
+              <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="FavouriteStops">
-              <PropertyRef Name="student_passid" />
+              <PropertyRef Name="student_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notificat__user___5070F446">
+        <Association Name="FK__IsAssigne__bus_i__5BE2A6F2">
+          <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
+          <End Role="IsAssigned" Type="Self.IsAssigned" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Bus">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="IsAssigned">
+              <PropertyRef Name="bus_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__IsAssigne__route__5CD6CB2B">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="IsAssigned" Type="Self.IsAssigned" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="IsAssigned">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Notificat__user___47DBAE45">
           <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
-          <End Role="Notification" Type="Self.Notification" Multiplicity="*" />
+          <End Role="Notifications" Type="Self.Notifications" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Users">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="Notification">
+            <Dependent Role="Notifications">
               <PropertyRef Name="user_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Parent__user_id__3B75D760">
+        <Association Name="FK__Parent__user_id__38996AB5">
           <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
           <End Role="Parent" Type="Self.Parent" Multiplicity="*" />
           <ReferentialConstraint>
@@ -249,7 +284,43 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RouteStop__route__534D60F1">
+        <Association Name="FK__Reaches__bus_id__6754599E">
+          <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
+          <End Role="Reaches" Type="Self.Reaches" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Bus">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Reaches">
+              <PropertyRef Name="bus_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Reaches__route_i__68487DD7">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="Reaches" Type="Self.Reaches" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Reaches">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Reaches__stop_id__693CA210">
+          <End Role="Stops" Type="Self.Stops" Multiplicity="0..1" />
+          <End Role="Reaches" Type="Self.Reaches" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stops">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Reaches">
+              <PropertyRef Name="stop_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RouteStop__route__6C190EBB">
           <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
           <End Role="RouteStop" Type="Self.RouteStop" Multiplicity="*" />
           <ReferentialConstraint>
@@ -261,7 +332,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RouteStop__stop___5441852A">
+        <Association Name="FK__RouteStop__stop___6D0D32F4">
           <End Role="Stops" Type="Self.Stops" Multiplicity="0..1" />
           <End Role="RouteStop" Type="Self.RouteStop" Multiplicity="*" />
           <ReferentialConstraint>
@@ -273,7 +344,31 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student__parent___3F466844">
+        <Association Name="FK__Starts__bus_id__6383C8BA">
+          <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
+          <End Role="Starts" Type="Self.Starts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Bus">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Starts">
+              <PropertyRef Name="bus_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Starts__route_id__6477ECF3">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="Starts" Type="Self.Starts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Starts">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Student__parent___3E52440B">
           <End Role="Parent" Type="Self.Parent" Multiplicity="0..1" />
           <End Role="Student" Type="Self.Student" Multiplicity="*" />
           <ReferentialConstraint>
@@ -285,7 +380,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student__user_id__3E52440B">
+        <Association Name="FK__Student__pass_id__3F466844">
+          <End Role="Pass" Type="Self.Pass" Multiplicity="0..1" />
+          <End Role="Student" Type="Self.Student" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pass">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Student">
+              <PropertyRef Name="pass_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Student__user_id__3D5E1FD2">
           <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
           <End Role="Student" Type="Self.Student" Multiplicity="*" />
           <ReferentialConstraint>
@@ -297,71 +404,115 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__StudentHi__bus_b__70DDC3D8">
+        <Association Name="FK__TracksLoc__bus_i__5FB337D6">
           <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
-          <End Role="StudentHistory" Type="Self.StudentHistory" Multiplicity="*" />
+          <End Role="TracksLocation" Type="Self.TracksLocation" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Bus">
-              <PropertyRef Name="busno" />
+              <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="StudentHistory">
-              <PropertyRef Name="bus_busno" />
+            <Dependent Role="TracksLocation">
+              <PropertyRef Name="bus_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__StudentHi__stop___72C60C4A">
+        <Association Name="FK__TracksLoc__route__60A75C0F">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="TracksLocation" Type="Self.TracksLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="TracksLocation">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Travels__bus_id__571DF1D5">
+          <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
+          <End Role="Travels" Type="Self.Travels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Bus">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Travels">
+              <PropertyRef Name="bus_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Travels__pass_id__5535A963">
+          <End Role="Pass" Type="Self.Pass" Multiplicity="0..1" />
+          <End Role="Travels" Type="Self.Travels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pass">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Travels">
+              <PropertyRef Name="pass_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Travels__route_i__5812160E">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="Travels" Type="Self.Travels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Travels">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Travels__stop_id__59063A47">
           <End Role="Stops" Type="Self.Stops" Multiplicity="0..1" />
-          <End Role="StudentHistory" Type="Self.StudentHistory" Multiplicity="*" />
+          <End Role="Travels" Type="Self.Travels" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Stops">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="StudentHistory">
+            <Dependent Role="Travels">
               <PropertyRef Name="stop_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__StudentHi__stude__6FE99F9F">
+        <Association Name="FK__Travels__student__5629CD9C">
           <End Role="Student" Type="Self.Student" Multiplicity="0..1" />
-          <End Role="StudentHistory" Type="Self.StudentHistory" Multiplicity="*" />
+          <End Role="Travels" Type="Self.Travels" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Student">
-              <PropertyRef Name="passid" />
+              <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="StudentHistory">
-              <PropertyRef Name="student_passid" />
+            <Dependent Role="Travels">
+              <PropertyRef Name="student_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="BusPassWithQRCodeModelStoreContainer">
+        <EntityContainer Name="BusPassWithQRScanModelStoreContainer">
           <EntitySet Name="Admin" EntityType="Self.Admin" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Bus" EntityType="Self.Bus" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="BusHistory" EntityType="Self.BusHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Conductor" EntityType="Self.Conductor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FavouriteStops" EntityType="Self.FavouriteStops" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Notification" EntityType="Self.Notification" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="IsAssigned" EntityType="Self.IsAssigned" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Parent" EntityType="Self.Parent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Pass" EntityType="Self.Pass" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Reaches" EntityType="Self.Reaches" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Route" EntityType="Self.Route" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RouteStop" EntityType="Self.RouteStop" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Starts" EntityType="Self.Starts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Stops" EntityType="Self.Stops" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Student" EntityType="Self.Student" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="StudentHistory" EntityType="Self.StudentHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TracksLocation" EntityType="Self.TracksLocation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Travels" EntityType="Self.Travels" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__Admin__user_id__38996AB5" Association="Self.FK__Admin__user_id__38996AB5">
+          <AssociationSet Name="FK__Admin__user_id__44FF419A" Association="Self.FK__Admin__user_id__44FF419A">
             <End Role="Users" EntitySet="Users" />
             <End Role="Admin" EntitySet="Admin" />
           </AssociationSet>
-          <AssociationSet Name="FK__Bus__conductor_i__47DBAE45" Association="Self.FK__Bus__conductor_i__47DBAE45">
+          <AssociationSet Name="FK__Bus__conductor_i__5070F446" Association="Self.FK__Bus__conductor_i__5070F446">
             <End Role="Conductor" EntitySet="Conductor" />
             <End Role="Bus" EntitySet="Bus" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Bus__route_id__46E78A0C" Association="Self.FK__Bus__route_id__46E78A0C">
-            <End Role="Route" EntitySet="Route" />
-            <End Role="Bus" EntitySet="Bus" />
-          </AssociationSet>
-          <AssociationSet Name="FK__BusHistor__bus_b__5CD6CB2B" Association="Self.FK__BusHistor__bus_b__5CD6CB2B">
-            <End Role="Bus" EntitySet="Bus" />
-            <End Role="BusHistory" EntitySet="BusHistory" />
           </AssociationSet>
           <AssociationSet Name="FK__Conductor__user___4222D4EF" Association="Self.FK__Conductor__user___4222D4EF">
             <End Role="Users" EntitySet="Users" />
@@ -375,48 +526,96 @@
             <End Role="Student" EntitySet="Student" />
             <End Role="FavouriteStops" EntitySet="FavouriteStops" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notificat__user___5070F446" Association="Self.FK__Notificat__user___5070F446">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="Notification" EntitySet="Notification" />
+          <AssociationSet Name="FK__IsAssigne__bus_i__5BE2A6F2" Association="Self.FK__IsAssigne__bus_i__5BE2A6F2">
+            <End Role="Bus" EntitySet="Bus" />
+            <End Role="IsAssigned" EntitySet="IsAssigned" />
           </AssociationSet>
-          <AssociationSet Name="FK__Parent__user_id__3B75D760" Association="Self.FK__Parent__user_id__3B75D760">
+          <AssociationSet Name="FK__IsAssigne__route__5CD6CB2B" Association="Self.FK__IsAssigne__route__5CD6CB2B">
+            <End Role="Route" EntitySet="Route" />
+            <End Role="IsAssigned" EntitySet="IsAssigned" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Notificat__user___47DBAE45" Association="Self.FK__Notificat__user___47DBAE45">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Notifications" EntitySet="Notifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Parent__user_id__38996AB5" Association="Self.FK__Parent__user_id__38996AB5">
             <End Role="Users" EntitySet="Users" />
             <End Role="Parent" EntitySet="Parent" />
           </AssociationSet>
-          <AssociationSet Name="FK__RouteStop__route__534D60F1" Association="Self.FK__RouteStop__route__534D60F1">
+          <AssociationSet Name="FK__Reaches__bus_id__6754599E" Association="Self.FK__Reaches__bus_id__6754599E">
+            <End Role="Bus" EntitySet="Bus" />
+            <End Role="Reaches" EntitySet="Reaches" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reaches__route_i__68487DD7" Association="Self.FK__Reaches__route_i__68487DD7">
+            <End Role="Route" EntitySet="Route" />
+            <End Role="Reaches" EntitySet="Reaches" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reaches__stop_id__693CA210" Association="Self.FK__Reaches__stop_id__693CA210">
+            <End Role="Stops" EntitySet="Stops" />
+            <End Role="Reaches" EntitySet="Reaches" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RouteStop__route__6C190EBB" Association="Self.FK__RouteStop__route__6C190EBB">
             <End Role="Route" EntitySet="Route" />
             <End Role="RouteStop" EntitySet="RouteStop" />
           </AssociationSet>
-          <AssociationSet Name="FK__RouteStop__stop___5441852A" Association="Self.FK__RouteStop__stop___5441852A">
+          <AssociationSet Name="FK__RouteStop__stop___6D0D32F4" Association="Self.FK__RouteStop__stop___6D0D32F4">
             <End Role="Stops" EntitySet="Stops" />
             <End Role="RouteStop" EntitySet="RouteStop" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student__parent___3F466844" Association="Self.FK__Student__parent___3F466844">
+          <AssociationSet Name="FK__Starts__bus_id__6383C8BA" Association="Self.FK__Starts__bus_id__6383C8BA">
+            <End Role="Bus" EntitySet="Bus" />
+            <End Role="Starts" EntitySet="Starts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Starts__route_id__6477ECF3" Association="Self.FK__Starts__route_id__6477ECF3">
+            <End Role="Route" EntitySet="Route" />
+            <End Role="Starts" EntitySet="Starts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Student__parent___3E52440B" Association="Self.FK__Student__parent___3E52440B">
             <End Role="Parent" EntitySet="Parent" />
             <End Role="Student" EntitySet="Student" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student__user_id__3E52440B" Association="Self.FK__Student__user_id__3E52440B">
+          <AssociationSet Name="FK__Student__pass_id__3F466844" Association="Self.FK__Student__pass_id__3F466844">
+            <End Role="Pass" EntitySet="Pass" />
+            <End Role="Student" EntitySet="Student" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Student__user_id__3D5E1FD2" Association="Self.FK__Student__user_id__3D5E1FD2">
             <End Role="Users" EntitySet="Users" />
             <End Role="Student" EntitySet="Student" />
           </AssociationSet>
-          <AssociationSet Name="FK__StudentHi__bus_b__70DDC3D8" Association="Self.FK__StudentHi__bus_b__70DDC3D8">
+          <AssociationSet Name="FK__TracksLoc__bus_i__5FB337D6" Association="Self.FK__TracksLoc__bus_i__5FB337D6">
             <End Role="Bus" EntitySet="Bus" />
-            <End Role="StudentHistory" EntitySet="StudentHistory" />
+            <End Role="TracksLocation" EntitySet="TracksLocation" />
           </AssociationSet>
-          <AssociationSet Name="FK__StudentHi__stop___72C60C4A" Association="Self.FK__StudentHi__stop___72C60C4A">
+          <AssociationSet Name="FK__TracksLoc__route__60A75C0F" Association="Self.FK__TracksLoc__route__60A75C0F">
+            <End Role="Route" EntitySet="Route" />
+            <End Role="TracksLocation" EntitySet="TracksLocation" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Travels__bus_id__571DF1D5" Association="Self.FK__Travels__bus_id__571DF1D5">
+            <End Role="Bus" EntitySet="Bus" />
+            <End Role="Travels" EntitySet="Travels" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Travels__pass_id__5535A963" Association="Self.FK__Travels__pass_id__5535A963">
+            <End Role="Pass" EntitySet="Pass" />
+            <End Role="Travels" EntitySet="Travels" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Travels__route_i__5812160E" Association="Self.FK__Travels__route_i__5812160E">
+            <End Role="Route" EntitySet="Route" />
+            <End Role="Travels" EntitySet="Travels" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Travels__stop_id__59063A47" Association="Self.FK__Travels__stop_id__59063A47">
             <End Role="Stops" EntitySet="Stops" />
-            <End Role="StudentHistory" EntitySet="StudentHistory" />
+            <End Role="Travels" EntitySet="Travels" />
           </AssociationSet>
-          <AssociationSet Name="FK__StudentHi__stude__6FE99F9F" Association="Self.FK__StudentHi__stude__6FE99F9F">
+          <AssociationSet Name="FK__Travels__student__5629CD9C" Association="Self.FK__Travels__student__5629CD9C">
             <End Role="Student" EntitySet="Student" />
-            <End Role="StudentHistory" EntitySet="StudentHistory" />
+            <End Role="Travels" EntitySet="Travels" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="BusPassWithQRCodeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="BusPassWithQRScanModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Admin">
           <Key>
             <PropertyRef Name="id" />
@@ -426,34 +625,22 @@
           <Property Name="contact" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
           <Property Name="gender" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
           <Property Name="user_id" Type="Int32" />
-          <NavigationProperty Name="User" Relationship="Self.FK__Admin__user_id__38996AB5" FromRole="Admin" ToRole="Users" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Admin__user_id__44FF419A" FromRole="Admin" ToRole="Users" />
         </EntityType>
         <EntityType Name="Bus">
-          <Key>
-            <PropertyRef Name="busno" />
-          </Key>
-          <Property Name="busno" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="regno" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
-          <Property Name="totalSeats" Type="Int32" />
-          <Property Name="route_id" Type="Int32" />
-          <Property Name="conductor_id" Type="Int32" />
-          <NavigationProperty Name="Conductor" Relationship="Self.FK__Bus__conductor_i__47DBAE45" FromRole="Bus" ToRole="Conductor" />
-          <NavigationProperty Name="Route" Relationship="Self.FK__Bus__route_id__46E78A0C" FromRole="Bus" ToRole="Route" />
-          <NavigationProperty Name="BusHistories" Relationship="Self.FK__BusHistor__bus_b__5CD6CB2B" FromRole="Bus" ToRole="BusHistory" />
-          <NavigationProperty Name="StudentHistories" Relationship="Self.FK__StudentHi__bus_b__70DDC3D8" FromRole="Bus" ToRole="StudentHistory" />
-        </EntityType>
-        <EntityType Name="BusHistory">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="date" Type="DateTime" Precision="0" />
-          <Property Name="time" Type="Time" Precision="7" />
-          <Property Name="BookedSeats" Type="Int32" />
-          <Property Name="latitude" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="longitude" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="bus_busno" Type="Int32" />
-          <NavigationProperty Name="Bus" Relationship="Self.FK__BusHistor__bus_b__5CD6CB2B" FromRole="BusHistory" ToRole="Bus" />
+          <Property Name="regno" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+          <Property Name="totalSeats" Type="Int32" />
+          <Property Name="conductor_id" Type="Int32" />
+          <NavigationProperty Name="Conductor" Relationship="Self.FK__Bus__conductor_i__5070F446" FromRole="Bus" ToRole="Conductor" />
+          <NavigationProperty Name="IsAssigneds" Relationship="Self.FK__IsAssigne__bus_i__5BE2A6F2" FromRole="Bus" ToRole="IsAssigned" />
+          <NavigationProperty Name="Reaches" Relationship="Self.FK__Reaches__bus_id__6754599E" FromRole="Bus" ToRole="Reaches" />
+          <NavigationProperty Name="Starts" Relationship="Self.FK__Starts__bus_id__6383C8BA" FromRole="Bus" ToRole="Starts" />
+          <NavigationProperty Name="TracksLocations" Relationship="Self.FK__TracksLoc__bus_i__5FB337D6" FromRole="Bus" ToRole="TracksLocation" />
+          <NavigationProperty Name="Travels" Relationship="Self.FK__Travels__bus_id__571DF1D5" FromRole="Bus" ToRole="Travels" />
         </EntityType>
         <EntityType Name="Conductor">
           <Key>
@@ -463,7 +650,7 @@
           <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="contact" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
           <Property Name="user_id" Type="Int32" />
-          <NavigationProperty Name="Buses" Relationship="Self.FK__Bus__conductor_i__47DBAE45" FromRole="Conductor" ToRole="Bus" />
+          <NavigationProperty Name="Buses" Relationship="Self.FK__Bus__conductor_i__5070F446" FromRole="Conductor" ToRole="Bus" />
           <NavigationProperty Name="User" Relationship="Self.FK__Conductor__user___4222D4EF" FromRole="Conductor" ToRole="Users" />
         </EntityType>
         <EntityType Name="FavouriteStop">
@@ -472,10 +659,19 @@
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="stop_id" Type="Int32" />
-          <Property Name="student_passid" Type="Int32" />
-          <Property Name="notification" Type="Int32" />
+          <Property Name="student_id" Type="Int32" />
           <NavigationProperty Name="Stop" Relationship="Self.FK__Favourite__stop___4CA06362" FromRole="FavouriteStops" ToRole="Stops" />
           <NavigationProperty Name="Student" Relationship="Self.FK__Favourite__stude__4D94879B" FromRole="FavouriteStops" ToRole="Student" />
+        </EntityType>
+        <EntityType Name="IsAssigned">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="bus_id" Type="Int32" />
+          <Property Name="route_id" Type="Int32" />
+          <NavigationProperty Name="Bus" Relationship="Self.FK__IsAssigne__bus_i__5BE2A6F2" FromRole="IsAssigned" ToRole="Bus" />
+          <NavigationProperty Name="Route" Relationship="Self.FK__IsAssigne__route__5CD6CB2B" FromRole="IsAssigned" ToRole="Route" />
         </EntityType>
         <EntityType Name="Notification">
           <Key>
@@ -488,7 +684,7 @@
           <Property Name="type" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="user_id" Type="Int32" />
-          <NavigationProperty Name="User" Relationship="Self.FK__Notificat__user___5070F446" FromRole="Notification" ToRole="Users" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Notificat__user___47DBAE45" FromRole="Notifications" ToRole="Users" />
         </EntityType>
         <EntityType Name="Parent">
           <Key>
@@ -497,10 +693,36 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="contact" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
-          <Property Name="childrenEnroll" Type="Int32" />
+          <Property Name="childrenenroll" Type="Int32" />
           <Property Name="user_id" Type="Int32" />
-          <NavigationProperty Name="User" Relationship="Self.FK__Parent__user_id__3B75D760" FromRole="Parent" ToRole="Users" />
-          <NavigationProperty Name="Students" Relationship="Self.FK__Student__parent___3F466844" FromRole="Parent" ToRole="Student" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Parent__user_id__38996AB5" FromRole="Parent" ToRole="Users" />
+          <NavigationProperty Name="Students" Relationship="Self.FK__Student__parent___3E52440B" FromRole="Parent" ToRole="Student" />
+        </EntityType>
+        <EntityType Name="Pass">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="passexpiry" Type="DateTime" Precision="0" />
+          <Property Name="totaljourneys" Type="Int32" />
+          <Property Name="remainingjourneys" Type="Int32" />
+          <NavigationProperty Name="Students" Relationship="Self.FK__Student__pass_id__3F466844" FromRole="Pass" ToRole="Student" />
+          <NavigationProperty Name="Travels" Relationship="Self.FK__Travels__pass_id__5535A963" FromRole="Pass" ToRole="Travels" />
+        </EntityType>
+        <EntityType Name="Reach">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Precision="0" />
+          <Property Name="time" Type="Time" Precision="7" />
+          <Property Name="bus_id" Type="Int32" />
+          <Property Name="route_id" Type="Int32" />
+          <Property Name="stop_id" Type="Int32" />
+          <NavigationProperty Name="Bus" Relationship="Self.FK__Reaches__bus_id__6754599E" FromRole="Reaches" ToRole="Bus" />
+          <NavigationProperty Name="Route" Relationship="Self.FK__Reaches__route_i__68487DD7" FromRole="Reaches" ToRole="Route" />
+          <NavigationProperty Name="Stop" Relationship="Self.FK__Reaches__stop_id__693CA210" FromRole="Reaches" ToRole="Stops" />
         </EntityType>
         <EntityType Name="Route">
           <Key>
@@ -508,55 +730,83 @@
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="totalstops" Type="Int32" />
-          <NavigationProperty Name="Buses" Relationship="Self.FK__Bus__route_id__46E78A0C" FromRole="Route" ToRole="Bus" />
-          <NavigationProperty Name="RouteStops" Relationship="Self.FK__RouteStop__route__534D60F1" FromRole="Route" ToRole="RouteStop" />
+          <NavigationProperty Name="IsAssigneds" Relationship="Self.FK__IsAssigne__route__5CD6CB2B" FromRole="Route" ToRole="IsAssigned" />
+          <NavigationProperty Name="Reaches" Relationship="Self.FK__Reaches__route_i__68487DD7" FromRole="Route" ToRole="Reaches" />
+          <NavigationProperty Name="RouteStops" Relationship="Self.FK__RouteStop__route__6C190EBB" FromRole="Route" ToRole="RouteStop" />
+          <NavigationProperty Name="Starts" Relationship="Self.FK__Starts__route_id__6477ECF3" FromRole="Route" ToRole="Starts" />
+          <NavigationProperty Name="TracksLocations" Relationship="Self.FK__TracksLoc__route__60A75C0F" FromRole="Route" ToRole="TracksLocation" />
+          <NavigationProperty Name="Travels" Relationship="Self.FK__Travels__route_i__5812160E" FromRole="Route" ToRole="Travels" />
         </EntityType>
         <EntityType Name="RouteStop">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="stoptiming" Type="Time" Precision="7" />
+          <Property Name="eststoptiming" Type="Time" Precision="7" />
           <Property Name="route_id" Type="Int32" />
           <Property Name="stop_id" Type="Int32" />
-          <NavigationProperty Name="Route" Relationship="Self.FK__RouteStop__route__534D60F1" FromRole="RouteStop" ToRole="Route" />
-          <NavigationProperty Name="Stop" Relationship="Self.FK__RouteStop__stop___5441852A" FromRole="RouteStop" ToRole="Stops" />
+          <NavigationProperty Name="Route" Relationship="Self.FK__RouteStop__route__6C190EBB" FromRole="RouteStop" ToRole="Route" />
+          <NavigationProperty Name="Stop" Relationship="Self.FK__RouteStop__stop___6D0D32F4" FromRole="RouteStop" ToRole="Stops" />
+        </EntityType>
+        <EntityType Name="Start">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Precision="0" />
+          <Property Name="time" Type="Time" Precision="7" />
+          <Property Name="bus_id" Type="Int32" />
+          <Property Name="route_id" Type="Int32" />
+          <NavigationProperty Name="Bus" Relationship="Self.FK__Starts__bus_id__6383C8BA" FromRole="Starts" ToRole="Bus" />
+          <NavigationProperty Name="Route" Relationship="Self.FK__Starts__route_id__6477ECF3" FromRole="Starts" ToRole="Route" />
         </EntityType>
         <EntityType Name="Stop">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="stopno" Type="Int32" />
           <Property Name="name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="pickup" Type="Time" Precision="7" />
-          <Property Name="dropup" Type="Time" Precision="7" />
           <Property Name="latitude" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="longitude" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="FavouriteStops" Relationship="Self.FK__Favourite__stop___4CA06362" FromRole="Stops" ToRole="FavouriteStops" />
-          <NavigationProperty Name="RouteStops" Relationship="Self.FK__RouteStop__stop___5441852A" FromRole="Stops" ToRole="RouteStop" />
-          <NavigationProperty Name="StudentHistories" Relationship="Self.FK__StudentHi__stop___72C60C4A" FromRole="Stops" ToRole="StudentHistory" />
+          <NavigationProperty Name="Reaches" Relationship="Self.FK__Reaches__stop_id__693CA210" FromRole="Stops" ToRole="Reaches" />
+          <NavigationProperty Name="RouteStops" Relationship="Self.FK__RouteStop__stop___6D0D32F4" FromRole="Stops" ToRole="RouteStop" />
+          <NavigationProperty Name="Travels" Relationship="Self.FK__Travels__stop_id__59063A47" FromRole="Stops" ToRole="Travels" />
         </EntityType>
         <EntityType Name="Student">
           <Key>
-            <PropertyRef Name="passid" />
+            <PropertyRef Name="id" />
           </Key>
-          <Property Name="passid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="gender" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="regno" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="contact" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
-          <Property Name="qrcode" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
-          <Property Name="totalJourney" Type="Int32" />
-          <Property Name="remainingJourney" Type="Int32" />
-          <Property Name="passExpiray" Type="DateTime" Precision="0" />
           <Property Name="parent_id" Type="Int32" />
           <Property Name="user_id" Type="Int32" />
+          <Property Name="pass_id" Type="Int32" />
           <NavigationProperty Name="FavouriteStops" Relationship="Self.FK__Favourite__stude__4D94879B" FromRole="Student" ToRole="FavouriteStops" />
-          <NavigationProperty Name="Parent" Relationship="Self.FK__Student__parent___3F466844" FromRole="Student" ToRole="Parent" />
-          <NavigationProperty Name="User" Relationship="Self.FK__Student__user_id__3E52440B" FromRole="Student" ToRole="Users" />
-          <NavigationProperty Name="StudentHistories" Relationship="Self.FK__StudentHi__stude__6FE99F9F" FromRole="Student" ToRole="StudentHistory" />
+          <NavigationProperty Name="Parent" Relationship="Self.FK__Student__parent___3E52440B" FromRole="Student" ToRole="Parent" />
+          <NavigationProperty Name="Pass" Relationship="Self.FK__Student__pass_id__3F466844" FromRole="Student" ToRole="Pass" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Student__user_id__3D5E1FD2" FromRole="Student" ToRole="Users" />
+          <NavigationProperty Name="Travels" Relationship="Self.FK__Travels__student__5629CD9C" FromRole="Student" ToRole="Travels" />
         </EntityType>
-        <EntityType Name="StudentHistory">
+        <EntityType Name="TracksLocation">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Precision="0" />
+          <Property Name="time" Type="Time" Precision="7" />
+          <Property Name="latitude" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="longitude" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="bus_id" Type="Int32" />
+          <Property Name="route_id" Type="Int32" />
+          <NavigationProperty Name="Bus" Relationship="Self.FK__TracksLoc__bus_i__5FB337D6" FromRole="TracksLocation" ToRole="Bus" />
+          <NavigationProperty Name="Route" Relationship="Self.FK__TracksLoc__route__60A75C0F" FromRole="TracksLocation" ToRole="Route" />
+        </EntityType>
+        <EntityType Name="Travel">
           <Key>
             <PropertyRef Name="id" />
           </Key>
@@ -564,12 +814,16 @@
           <Property Name="date" Type="DateTime" Precision="0" />
           <Property Name="time" Type="Time" Precision="7" />
           <Property Name="type" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="student_passid" Type="Int32" />
-          <Property Name="bus_busno" Type="Int32" />
+          <Property Name="pass_id" Type="Int32" />
+          <Property Name="student_id" Type="Int32" />
+          <Property Name="bus_id" Type="Int32" />
+          <Property Name="route_id" Type="Int32" />
           <Property Name="stop_id" Type="Int32" />
-          <NavigationProperty Name="Bus" Relationship="Self.FK__StudentHi__bus_b__70DDC3D8" FromRole="StudentHistory" ToRole="Bus" />
-          <NavigationProperty Name="Stop" Relationship="Self.FK__StudentHi__stop___72C60C4A" FromRole="StudentHistory" ToRole="Stops" />
-          <NavigationProperty Name="Student" Relationship="Self.FK__StudentHi__stude__6FE99F9F" FromRole="StudentHistory" ToRole="Student" />
+          <NavigationProperty Name="Bus" Relationship="Self.FK__Travels__bus_id__571DF1D5" FromRole="Travels" ToRole="Bus" />
+          <NavigationProperty Name="Pass" Relationship="Self.FK__Travels__pass_id__5535A963" FromRole="Travels" ToRole="Pass" />
+          <NavigationProperty Name="Route" Relationship="Self.FK__Travels__route_i__5812160E" FromRole="Travels" ToRole="Route" />
+          <NavigationProperty Name="Stop" Relationship="Self.FK__Travels__stop_id__59063A47" FromRole="Travels" ToRole="Stops" />
+          <NavigationProperty Name="Student" Relationship="Self.FK__Travels__student__5629CD9C" FromRole="Travels" ToRole="Student" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -579,13 +833,13 @@
           <Property Name="username" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="role" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Admins" Relationship="Self.FK__Admin__user_id__38996AB5" FromRole="Users" ToRole="Admin" />
+          <NavigationProperty Name="Admins" Relationship="Self.FK__Admin__user_id__44FF419A" FromRole="Users" ToRole="Admin" />
           <NavigationProperty Name="Conductors" Relationship="Self.FK__Conductor__user___4222D4EF" FromRole="Users" ToRole="Conductor" />
-          <NavigationProperty Name="Notifications" Relationship="Self.FK__Notificat__user___5070F446" FromRole="Users" ToRole="Notification" />
-          <NavigationProperty Name="Parents" Relationship="Self.FK__Parent__user_id__3B75D760" FromRole="Users" ToRole="Parent" />
-          <NavigationProperty Name="Students" Relationship="Self.FK__Student__user_id__3E52440B" FromRole="Users" ToRole="Student" />
+          <NavigationProperty Name="Notifications" Relationship="Self.FK__Notificat__user___47DBAE45" FromRole="Users" ToRole="Notifications" />
+          <NavigationProperty Name="Parents" Relationship="Self.FK__Parent__user_id__38996AB5" FromRole="Users" ToRole="Parent" />
+          <NavigationProperty Name="Students" Relationship="Self.FK__Student__user_id__3D5E1FD2" FromRole="Users" ToRole="Student" />
         </EntityType>
-        <Association Name="FK__Admin__user_id__38996AB5">
+        <Association Name="FK__Admin__user_id__44FF419A">
           <End Role="Users" Type="Self.User" Multiplicity="0..1" />
           <End Role="Admin" Type="Self.Admin" Multiplicity="*" />
           <ReferentialConstraint>
@@ -597,7 +851,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Bus__conductor_i__47DBAE45">
+        <Association Name="FK__Bus__conductor_i__5070F446">
           <End Role="Conductor" Type="Self.Conductor" Multiplicity="0..1" />
           <End Role="Bus" Type="Self.Bus" Multiplicity="*" />
           <ReferentialConstraint>
@@ -609,39 +863,63 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Bus__route_id__46E78A0C">
-          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
-          <End Role="Bus" Type="Self.Bus" Multiplicity="*" />
+        <Association Name="FK__IsAssigne__bus_i__5BE2A6F2">
+          <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
+          <End Role="IsAssigned" Type="Self.IsAssigned" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Route">
+            <Principal Role="Bus">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="Bus">
-              <PropertyRef Name="route_id" />
+            <Dependent Role="IsAssigned">
+              <PropertyRef Name="bus_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__BusHistor__bus_b__5CD6CB2B">
+        <Association Name="FK__Reaches__bus_id__6754599E">
           <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
-          <End Role="BusHistory" Type="Self.BusHistory" Multiplicity="*" />
+          <End Role="Reaches" Type="Self.Reach" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Bus">
-              <PropertyRef Name="busno" />
+              <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="BusHistory">
-              <PropertyRef Name="bus_busno" />
+            <Dependent Role="Reaches">
+              <PropertyRef Name="bus_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__StudentHi__bus_b__70DDC3D8">
+        <Association Name="FK__Starts__bus_id__6383C8BA">
           <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
-          <End Role="StudentHistory" Type="Self.StudentHistory" Multiplicity="*" />
+          <End Role="Starts" Type="Self.Start" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Bus">
-              <PropertyRef Name="busno" />
+              <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="StudentHistory">
-              <PropertyRef Name="bus_busno" />
+            <Dependent Role="Starts">
+              <PropertyRef Name="bus_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TracksLoc__bus_i__5FB337D6">
+          <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
+          <End Role="TracksLocation" Type="Self.TracksLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Bus">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="TracksLocation">
+              <PropertyRef Name="bus_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Travels__bus_id__571DF1D5">
+          <End Role="Bus" Type="Self.Bus" Multiplicity="0..1" />
+          <End Role="Travels" Type="Self.Travel" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Bus">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Travels">
+              <PropertyRef Name="bus_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -674,26 +952,38 @@
           <End Role="FavouriteStops" Type="Self.FavouriteStop" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Student">
-              <PropertyRef Name="passid" />
+              <PropertyRef Name="id" />
             </Principal>
             <Dependent Role="FavouriteStops">
-              <PropertyRef Name="student_passid" />
+              <PropertyRef Name="student_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notificat__user___5070F446">
+        <Association Name="FK__IsAssigne__route__5CD6CB2B">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="IsAssigned" Type="Self.IsAssigned" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="IsAssigned">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Notificat__user___47DBAE45">
           <End Role="Users" Type="Self.User" Multiplicity="0..1" />
-          <End Role="Notification" Type="Self.Notification" Multiplicity="*" />
+          <End Role="Notifications" Type="Self.Notification" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Users">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="Notification">
+            <Dependent Role="Notifications">
               <PropertyRef Name="user_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Parent__user_id__3B75D760">
+        <Association Name="FK__Parent__user_id__38996AB5">
           <End Role="Users" Type="Self.User" Multiplicity="0..1" />
           <End Role="Parent" Type="Self.Parent" Multiplicity="*" />
           <ReferentialConstraint>
@@ -705,7 +995,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student__parent___3F466844">
+        <Association Name="FK__Student__parent___3E52440B">
           <End Role="Parent" Type="Self.Parent" Multiplicity="0..1" />
           <End Role="Student" Type="Self.Student" Multiplicity="*" />
           <ReferentialConstraint>
@@ -717,7 +1007,55 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RouteStop__route__534D60F1">
+        <Association Name="FK__Student__pass_id__3F466844">
+          <End Role="Pass" Type="Self.Pass" Multiplicity="0..1" />
+          <End Role="Student" Type="Self.Student" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pass">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Student">
+              <PropertyRef Name="pass_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Travels__pass_id__5535A963">
+          <End Role="Pass" Type="Self.Pass" Multiplicity="0..1" />
+          <End Role="Travels" Type="Self.Travel" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pass">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Travels">
+              <PropertyRef Name="pass_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Reaches__route_i__68487DD7">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="Reaches" Type="Self.Reach" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Reaches">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Reaches__stop_id__693CA210">
+          <End Role="Stops" Type="Self.Stop" Multiplicity="0..1" />
+          <End Role="Reaches" Type="Self.Reach" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stops">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Reaches">
+              <PropertyRef Name="stop_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RouteStop__route__6C190EBB">
           <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
           <End Role="RouteStop" Type="Self.RouteStop" Multiplicity="*" />
           <ReferentialConstraint>
@@ -729,7 +1067,43 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RouteStop__stop___5441852A">
+        <Association Name="FK__Starts__route_id__6477ECF3">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="Starts" Type="Self.Start" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Starts">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TracksLoc__route__60A75C0F">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="TracksLocation" Type="Self.TracksLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="TracksLocation">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Travels__route_i__5812160E">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="Travels" Type="Self.Travel" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Travels">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RouteStop__stop___6D0D32F4">
           <End Role="Stops" Type="Self.Stop" Multiplicity="0..1" />
           <End Role="RouteStop" Type="Self.RouteStop" Multiplicity="*" />
           <ReferentialConstraint>
@@ -741,19 +1115,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__StudentHi__stop___72C60C4A">
+        <Association Name="FK__Travels__stop_id__59063A47">
           <End Role="Stops" Type="Self.Stop" Multiplicity="0..1" />
-          <End Role="StudentHistory" Type="Self.StudentHistory" Multiplicity="*" />
+          <End Role="Travels" Type="Self.Travel" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Stops">
               <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="StudentHistory">
+            <Dependent Role="Travels">
               <PropertyRef Name="stop_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student__user_id__3E52440B">
+        <Association Name="FK__Student__user_id__3D5E1FD2">
           <End Role="Users" Type="Self.User" Multiplicity="0..1" />
           <End Role="Student" Type="Self.Student" Multiplicity="*" />
           <ReferentialConstraint>
@@ -765,51 +1139,63 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__StudentHi__stude__6FE99F9F">
+        <Association Name="FK__Travels__student__5629CD9C">
           <End Role="Student" Type="Self.Student" Multiplicity="0..1" />
-          <End Role="StudentHistory" Type="Self.StudentHistory" Multiplicity="*" />
+          <End Role="Travels" Type="Self.Travel" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Student">
-              <PropertyRef Name="passid" />
+              <PropertyRef Name="id" />
             </Principal>
-            <Dependent Role="StudentHistory">
-              <PropertyRef Name="student_passid" />
+            <Dependent Role="Travels">
+              <PropertyRef Name="student_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="BusPassWithQRCodeEntities2" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="BusPassWithQRScanEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Admins" EntityType="Self.Admin" />
           <EntitySet Name="Buses" EntityType="Self.Bus" />
-          <EntitySet Name="BusHistories" EntityType="Self.BusHistory" />
           <EntitySet Name="Conductors" EntityType="Self.Conductor" />
           <EntitySet Name="FavouriteStops" EntityType="Self.FavouriteStop" />
+          <EntitySet Name="IsAssigneds" EntityType="Self.IsAssigned" />
           <EntitySet Name="Notifications" EntityType="Self.Notification" />
           <EntitySet Name="Parents" EntityType="Self.Parent" />
+          <EntitySet Name="Passes" EntityType="Self.Pass" />
+          <EntitySet Name="Reaches" EntityType="Self.Reach" />
           <EntitySet Name="Routes" EntityType="Self.Route" />
           <EntitySet Name="RouteStops" EntityType="Self.RouteStop" />
+          <EntitySet Name="Starts" EntityType="Self.Start" />
           <EntitySet Name="Stops" EntityType="Self.Stop" />
           <EntitySet Name="Students" EntityType="Self.Student" />
-          <EntitySet Name="StudentHistories" EntityType="Self.StudentHistory" />
+          <EntitySet Name="TracksLocations" EntityType="Self.TracksLocation" />
+          <EntitySet Name="Travels" EntityType="Self.Travel" />
           <EntitySet Name="Users" EntityType="Self.User" />
-          <AssociationSet Name="FK__Admin__user_id__38996AB5" Association="Self.FK__Admin__user_id__38996AB5">
+          <AssociationSet Name="FK__Admin__user_id__44FF419A" Association="Self.FK__Admin__user_id__44FF419A">
             <End Role="Users" EntitySet="Users" />
             <End Role="Admin" EntitySet="Admins" />
           </AssociationSet>
-          <AssociationSet Name="FK__Bus__conductor_i__47DBAE45" Association="Self.FK__Bus__conductor_i__47DBAE45">
+          <AssociationSet Name="FK__Bus__conductor_i__5070F446" Association="Self.FK__Bus__conductor_i__5070F446">
             <End Role="Conductor" EntitySet="Conductors" />
             <End Role="Bus" EntitySet="Buses" />
           </AssociationSet>
-          <AssociationSet Name="FK__Bus__route_id__46E78A0C" Association="Self.FK__Bus__route_id__46E78A0C">
-            <End Role="Route" EntitySet="Routes" />
+          <AssociationSet Name="FK__IsAssigne__bus_i__5BE2A6F2" Association="Self.FK__IsAssigne__bus_i__5BE2A6F2">
             <End Role="Bus" EntitySet="Buses" />
+            <End Role="IsAssigned" EntitySet="IsAssigneds" />
           </AssociationSet>
-          <AssociationSet Name="FK__BusHistor__bus_b__5CD6CB2B" Association="Self.FK__BusHistor__bus_b__5CD6CB2B">
+          <AssociationSet Name="FK__Reaches__bus_id__6754599E" Association="Self.FK__Reaches__bus_id__6754599E">
             <End Role="Bus" EntitySet="Buses" />
-            <End Role="BusHistory" EntitySet="BusHistories" />
+            <End Role="Reaches" EntitySet="Reaches" />
           </AssociationSet>
-          <AssociationSet Name="FK__StudentHi__bus_b__70DDC3D8" Association="Self.FK__StudentHi__bus_b__70DDC3D8">
+          <AssociationSet Name="FK__Starts__bus_id__6383C8BA" Association="Self.FK__Starts__bus_id__6383C8BA">
             <End Role="Bus" EntitySet="Buses" />
-            <End Role="StudentHistory" EntitySet="StudentHistories" />
+            <End Role="Starts" EntitySet="Starts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TracksLoc__bus_i__5FB337D6" Association="Self.FK__TracksLoc__bus_i__5FB337D6">
+            <End Role="Bus" EntitySet="Buses" />
+            <End Role="TracksLocation" EntitySet="TracksLocations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Travels__bus_id__571DF1D5" Association="Self.FK__Travels__bus_id__571DF1D5">
+            <End Role="Bus" EntitySet="Buses" />
+            <End Role="Travels" EntitySet="Travels" />
           </AssociationSet>
           <AssociationSet Name="FK__Conductor__user___4222D4EF" Association="Self.FK__Conductor__user___4222D4EF">
             <End Role="Users" EntitySet="Users" />
@@ -823,37 +1209,69 @@
             <End Role="Student" EntitySet="Students" />
             <End Role="FavouriteStops" EntitySet="FavouriteStops" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notificat__user___5070F446" Association="Self.FK__Notificat__user___5070F446">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="Notification" EntitySet="Notifications" />
+          <AssociationSet Name="FK__IsAssigne__route__5CD6CB2B" Association="Self.FK__IsAssigne__route__5CD6CB2B">
+            <End Role="Route" EntitySet="Routes" />
+            <End Role="IsAssigned" EntitySet="IsAssigneds" />
           </AssociationSet>
-          <AssociationSet Name="FK__Parent__user_id__3B75D760" Association="Self.FK__Parent__user_id__3B75D760">
+          <AssociationSet Name="FK__Notificat__user___47DBAE45" Association="Self.FK__Notificat__user___47DBAE45">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Notifications" EntitySet="Notifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Parent__user_id__38996AB5" Association="Self.FK__Parent__user_id__38996AB5">
             <End Role="Users" EntitySet="Users" />
             <End Role="Parent" EntitySet="Parents" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student__parent___3F466844" Association="Self.FK__Student__parent___3F466844">
+          <AssociationSet Name="FK__Student__parent___3E52440B" Association="Self.FK__Student__parent___3E52440B">
             <End Role="Parent" EntitySet="Parents" />
             <End Role="Student" EntitySet="Students" />
           </AssociationSet>
-          <AssociationSet Name="FK__RouteStop__route__534D60F1" Association="Self.FK__RouteStop__route__534D60F1">
+          <AssociationSet Name="FK__Student__pass_id__3F466844" Association="Self.FK__Student__pass_id__3F466844">
+            <End Role="Pass" EntitySet="Passes" />
+            <End Role="Student" EntitySet="Students" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Travels__pass_id__5535A963" Association="Self.FK__Travels__pass_id__5535A963">
+            <End Role="Pass" EntitySet="Passes" />
+            <End Role="Travels" EntitySet="Travels" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reaches__route_i__68487DD7" Association="Self.FK__Reaches__route_i__68487DD7">
+            <End Role="Route" EntitySet="Routes" />
+            <End Role="Reaches" EntitySet="Reaches" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Reaches__stop_id__693CA210" Association="Self.FK__Reaches__stop_id__693CA210">
+            <End Role="Stops" EntitySet="Stops" />
+            <End Role="Reaches" EntitySet="Reaches" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RouteStop__route__6C190EBB" Association="Self.FK__RouteStop__route__6C190EBB">
             <End Role="Route" EntitySet="Routes" />
             <End Role="RouteStop" EntitySet="RouteStops" />
           </AssociationSet>
-          <AssociationSet Name="FK__RouteStop__stop___5441852A" Association="Self.FK__RouteStop__stop___5441852A">
+          <AssociationSet Name="FK__Starts__route_id__6477ECF3" Association="Self.FK__Starts__route_id__6477ECF3">
+            <End Role="Route" EntitySet="Routes" />
+            <End Role="Starts" EntitySet="Starts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TracksLoc__route__60A75C0F" Association="Self.FK__TracksLoc__route__60A75C0F">
+            <End Role="Route" EntitySet="Routes" />
+            <End Role="TracksLocation" EntitySet="TracksLocations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Travels__route_i__5812160E" Association="Self.FK__Travels__route_i__5812160E">
+            <End Role="Route" EntitySet="Routes" />
+            <End Role="Travels" EntitySet="Travels" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RouteStop__stop___6D0D32F4" Association="Self.FK__RouteStop__stop___6D0D32F4">
             <End Role="Stops" EntitySet="Stops" />
             <End Role="RouteStop" EntitySet="RouteStops" />
           </AssociationSet>
-          <AssociationSet Name="FK__StudentHi__stop___72C60C4A" Association="Self.FK__StudentHi__stop___72C60C4A">
+          <AssociationSet Name="FK__Travels__stop_id__59063A47" Association="Self.FK__Travels__stop_id__59063A47">
             <End Role="Stops" EntitySet="Stops" />
-            <End Role="StudentHistory" EntitySet="StudentHistories" />
+            <End Role="Travels" EntitySet="Travels" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student__user_id__3E52440B" Association="Self.FK__Student__user_id__3E52440B">
+          <AssociationSet Name="FK__Student__user_id__3D5E1FD2" Association="Self.FK__Student__user_id__3D5E1FD2">
             <End Role="Users" EntitySet="Users" />
             <End Role="Student" EntitySet="Students" />
           </AssociationSet>
-          <AssociationSet Name="FK__StudentHi__stude__6FE99F9F" Association="Self.FK__StudentHi__stude__6FE99F9F">
+          <AssociationSet Name="FK__Travels__student__5629CD9C" Association="Self.FK__Travels__student__5629CD9C">
             <End Role="Student" EntitySet="Students" />
-            <End Role="StudentHistory" EntitySet="StudentHistories" />
+            <End Role="Travels" EntitySet="Travels" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -861,9 +1279,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="BusPassWithQRCodeModelStoreContainer" CdmEntityContainer="BusPassWithQRCodeEntities2">
+        <EntityContainerMapping StorageEntityContainer="BusPassWithQRScanModelStoreContainer" CdmEntityContainer="BusPassWithQRScanEntities">
           <EntitySetMapping Name="Admins">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.Admin">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Admin">
               <MappingFragment StoreEntitySet="Admin">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -874,31 +1292,17 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Buses">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.Bus">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Bus">
               <MappingFragment StoreEntitySet="Bus">
-                <ScalarProperty Name="busno" ColumnName="busno" />
+                <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="regno" ColumnName="regno" />
                 <ScalarProperty Name="totalSeats" ColumnName="totalSeats" />
-                <ScalarProperty Name="route_id" ColumnName="route_id" />
                 <ScalarProperty Name="conductor_id" ColumnName="conductor_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="BusHistories">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.BusHistory">
-              <MappingFragment StoreEntitySet="BusHistory">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="date" ColumnName="date" />
-                <ScalarProperty Name="time" ColumnName="time" />
-                <ScalarProperty Name="BookedSeats" ColumnName="BookedSeats" />
-                <ScalarProperty Name="latitude" ColumnName="latitude" />
-                <ScalarProperty Name="longitude" ColumnName="longitude" />
-                <ScalarProperty Name="bus_busno" ColumnName="bus_busno" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Conductors">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.Conductor">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Conductor">
               <MappingFragment StoreEntitySet="Conductor">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
@@ -908,18 +1312,26 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="FavouriteStops">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.FavouriteStop">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.FavouriteStop">
               <MappingFragment StoreEntitySet="FavouriteStops">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="stop_id" ColumnName="stop_id" />
-                <ScalarProperty Name="student_passid" ColumnName="student_passid" />
-                <ScalarProperty Name="notification" ColumnName="notification" />
+                <ScalarProperty Name="student_id" ColumnName="student_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="IsAssigneds">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.IsAssigned">
+              <MappingFragment StoreEntitySet="IsAssigned">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="bus_id" ColumnName="bus_id" />
+                <ScalarProperty Name="route_id" ColumnName="route_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Notifications">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.Notification">
-              <MappingFragment StoreEntitySet="Notification">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Notification">
+              <MappingFragment StoreEntitySet="Notifications">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date" ColumnName="date" />
                 <ScalarProperty Name="time" ColumnName="time" />
@@ -931,18 +1343,41 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Parents">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.Parent">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Parent">
               <MappingFragment StoreEntitySet="Parent">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="contact" ColumnName="contact" />
-                <ScalarProperty Name="childrenEnroll" ColumnName="childrenEnroll" />
+                <ScalarProperty Name="childrenenroll" ColumnName="childrenenroll" />
                 <ScalarProperty Name="user_id" ColumnName="user_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Passes">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Pass">
+              <MappingFragment StoreEntitySet="Pass">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="passexpiry" ColumnName="passexpiry" />
+                <ScalarProperty Name="totaljourneys" ColumnName="totaljourneys" />
+                <ScalarProperty Name="remainingjourneys" ColumnName="remainingjourneys" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Reaches">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Reach">
+              <MappingFragment StoreEntitySet="Reaches">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="bus_id" ColumnName="bus_id" />
+                <ScalarProperty Name="route_id" ColumnName="route_id" />
+                <ScalarProperty Name="stop_id" ColumnName="stop_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Routes">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.Route">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Route">
               <MappingFragment StoreEntitySet="Route">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="totalstops" ColumnName="totalstops" />
@@ -950,59 +1385,81 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RouteStops">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.RouteStop">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.RouteStop">
               <MappingFragment StoreEntitySet="RouteStop">
                 <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="stoptiming" ColumnName="stoptiming" />
+                <ScalarProperty Name="eststoptiming" ColumnName="eststoptiming" />
                 <ScalarProperty Name="route_id" ColumnName="route_id" />
                 <ScalarProperty Name="stop_id" ColumnName="stop_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Starts">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Start">
+              <MappingFragment StoreEntitySet="Starts">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="bus_id" ColumnName="bus_id" />
+                <ScalarProperty Name="route_id" ColumnName="route_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Stops">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.Stop">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Stop">
               <MappingFragment StoreEntitySet="Stops">
                 <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="stopno" ColumnName="stopno" />
                 <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="pickup" ColumnName="pickup" />
-                <ScalarProperty Name="dropup" ColumnName="dropup" />
                 <ScalarProperty Name="latitude" ColumnName="latitude" />
                 <ScalarProperty Name="longitude" ColumnName="longitude" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Students">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.Student">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Student">
               <MappingFragment StoreEntitySet="Student">
-                <ScalarProperty Name="passid" ColumnName="passid" />
+                <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="gender" ColumnName="gender" />
                 <ScalarProperty Name="regno" ColumnName="regno" />
                 <ScalarProperty Name="contact" ColumnName="contact" />
-                <ScalarProperty Name="qrcode" ColumnName="qrcode" />
-                <ScalarProperty Name="totalJourney" ColumnName="totalJourney" />
-                <ScalarProperty Name="remainingJourney" ColumnName="remainingJourney" />
-                <ScalarProperty Name="passExpiray" ColumnName="passExpiray" />
                 <ScalarProperty Name="parent_id" ColumnName="parent_id" />
                 <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="pass_id" ColumnName="pass_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="StudentHistories">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.StudentHistory">
-              <MappingFragment StoreEntitySet="StudentHistory">
+          <EntitySetMapping Name="TracksLocations">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.TracksLocation">
+              <MappingFragment StoreEntitySet="TracksLocation">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="latitude" ColumnName="latitude" />
+                <ScalarProperty Name="longitude" ColumnName="longitude" />
+                <ScalarProperty Name="bus_id" ColumnName="bus_id" />
+                <ScalarProperty Name="route_id" ColumnName="route_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Travels">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Travel">
+              <MappingFragment StoreEntitySet="Travels">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date" ColumnName="date" />
                 <ScalarProperty Name="time" ColumnName="time" />
                 <ScalarProperty Name="type" ColumnName="type" />
-                <ScalarProperty Name="student_passid" ColumnName="student_passid" />
-                <ScalarProperty Name="bus_busno" ColumnName="bus_busno" />
+                <ScalarProperty Name="pass_id" ColumnName="pass_id" />
+                <ScalarProperty Name="student_id" ColumnName="student_id" />
+                <ScalarProperty Name="bus_id" ColumnName="bus_id" />
+                <ScalarProperty Name="route_id" ColumnName="route_id" />
                 <ScalarProperty Name="stop_id" ColumnName="stop_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Users">
-            <EntityTypeMapping TypeName="BusPassWithQRCodeModel.User">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.User">
               <MappingFragment StoreEntitySet="Users">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="username" ColumnName="username" />

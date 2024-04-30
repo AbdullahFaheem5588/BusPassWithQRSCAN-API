@@ -17,16 +17,28 @@ namespace WebApi.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Route()
         {
-            this.Buses = new HashSet<Bus>();
+            this.IsAssigneds = new HashSet<IsAssigned>();
+            this.Reaches = new HashSet<Reach>();
             this.RouteStops = new HashSet<RouteStop>();
+            this.Starts = new HashSet<Start>();
+            this.TracksLocations = new HashSet<TracksLocation>();
+            this.Travels = new HashSet<Travel>();
         }
     
         public int id { get; set; }
         public Nullable<int> totalstops { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Bus> Buses { get; set; }
+        public virtual ICollection<IsAssigned> IsAssigneds { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Reach> Reaches { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RouteStop> RouteStops { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Start> Starts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TracksLocation> TracksLocations { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Travel> Travels { get; set; }
     }
 }

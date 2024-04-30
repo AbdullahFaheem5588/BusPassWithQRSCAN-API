@@ -10,7 +10,7 @@ namespace WebApi.Controllers
 {
     public class StopsController : ApiController
     {
-        BusPassWithQRCodeEntities db = new BusPassWithQRCodeEntities();
+        BusPassWithQRScanEntities db = new BusPassWithQRScanEntities();
         //[HttpGet]
         //public HttpResponseMessage GetAllStop()
         //{

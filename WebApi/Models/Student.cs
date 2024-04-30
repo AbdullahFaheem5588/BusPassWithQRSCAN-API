@@ -18,26 +18,24 @@ namespace WebApi.Models
         public Student()
         {
             this.FavouriteStops = new HashSet<FavouriteStop>();
-            this.StudentHistories = new HashSet<StudentHistory>();
+            this.Travels = new HashSet<Travel>();
         }
     
-        public int passid { get; set; }
+        public int id { get; set; }
         public string name { get; set; }
         public string gender { get; set; }
         public string regno { get; set; }
         public string contact { get; set; }
-        public string qrcode { get; set; }
-        public Nullable<int> totalJourney { get; set; }
-        public Nullable<int> remainingJourney { get; set; }
-        public Nullable<System.DateTime> passExpiray { get; set; }
         public Nullable<int> parent_id { get; set; }
         public Nullable<int> user_id { get; set; }
+        public Nullable<int> pass_id { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FavouriteStop> FavouriteStops { get; set; }
         public virtual Parent Parent { get; set; }
+        public virtual Pass Pass { get; set; }
         public virtual User User { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StudentHistory> StudentHistories { get; set; }
+        public virtual ICollection<Travel> Travels { get; set; }
     }
 }

@@ -19,7 +19,6 @@ namespace WebApi.Models
         {
             this.Admins = new HashSet<Admin>();
             this.Conductors = new HashSet<Conductor>();
-            this.Notifications = new HashSet<Notification>();
             this.Parents = new HashSet<Parent>();
             this.Students = new HashSet<Student>();
         }

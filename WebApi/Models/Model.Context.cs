@@ -13,10 +13,10 @@ namespace WebApi.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class BusPassWithQRCodeEntities : DbContext
+    public partial class BusPassWithQRScanEntities : DbContext
     {
-        public BusPassWithQRCodeEntities()
-            : base("name=BusPassWithQRCodeEntities")
+        public BusPassWithQRScanEntities()
+            : base("name=BusPassWithQRScanEntities")
         {
         }
     
@@ -27,16 +27,20 @@ namespace WebApi.Models
     
         public virtual DbSet<Admin> Admins { get; set; }
         public virtual DbSet<Bus> Buses { get; set; }
-        public virtual DbSet<BusHistory> BusHistories { get; set; }
         public virtual DbSet<Conductor> Conductors { get; set; }
         public virtual DbSet<FavouriteStop> FavouriteStops { get; set; }
+        public virtual DbSet<IsAssigned> IsAssigneds { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<Parent> Parents { get; set; }
+        public virtual DbSet<Pass> Passes { get; set; }
+        public virtual DbSet<Reach> Reaches { get; set; }
         public virtual DbSet<Route> Routes { get; set; }
         public virtual DbSet<RouteStop> RouteStops { get; set; }
+        public virtual DbSet<Start> Starts { get; set; }
         public virtual DbSet<Stop> Stops { get; set; }
         public virtual DbSet<Student> Students { get; set; }
-        public virtual DbSet<StudentHistory> StudentHistories { get; set; }
+        public virtual DbSet<TracksLocation> TracksLocations { get; set; }
+        public virtual DbSet<Travel> Travels { get; set; }
         public virtual DbSet<User> Users { get; set; }
     }
 }

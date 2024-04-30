@@ -16,8 +16,7 @@ namespace WebApi.Models
     {
         public int id { get; set; }
         public Nullable<int> stop_id { get; set; }
-        public Nullable<int> student_passid { get; set; }
-        public Nullable<int> notification { get; set; }
+        public Nullable<int> student_id { get; set; }
     
         public virtual Stop Stop { get; set; }
         public virtual Student Student { get; set; }

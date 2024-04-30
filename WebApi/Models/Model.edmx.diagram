@@ -4,36 +4,50 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="a6fd25459e4c41a8980eeb1fafdd3812" Name="Diagram1" ZoomLevel="55">
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.Admin" Width="1.5" PointX="3" PointY="4.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.Bus" Width="1.5" PointX="5.25" PointY="7.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.BusHistory" Width="1.5" PointX="7.5" PointY="7.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.Conductor" Width="1.5" PointX="3" PointY="7.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.FavouriteStop" Width="1.5" PointX="7.5" PointY="15.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.Notification" Width="1.5" PointX="3" PointY="10.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.Parent" Width="1.5" PointX="3" PointY="13.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.Route" Width="1.5" PointX="3" PointY="1.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.RouteStop" Width="1.5" PointX="10.5" PointY="9.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.Stop" Width="1.5" PointX="5.25" PointY="16.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.Student" Width="1.5" PointX="5.25" PointY="11.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.StudentHistory" Width="1.5" PointX="7.5" PointY="10.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="BusPassWithQRCodeModel.User" Width="1.5" PointX="0.75" PointY="8.875" IsExpanded="true" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__Admin__user_id__38996AB5" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__Bus__conductor_i__47DBAE45" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__Bus__route_id__46E78A0C" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__BusHistor__bus_b__5CD6CB2B" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__StudentHi__bus_b__70DDC3D8" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__Conductor__user___4222D4EF" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__Favourite__stop___4CA06362" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__Favourite__stude__4D94879B" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__Notificat__user___5070F446" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__Parent__user_id__3B75D760" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__Student__parent___3F466844" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__RouteStop__route__534D60F1" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__RouteStop__stop___5441852A" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__StudentHi__stop___72C60C4A" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__Student__user_id__3E52440B" ManuallyRouted="false" />
-        <AssociationConnector Association="BusPassWithQRCodeModel.FK__StudentHi__stude__6FE99F9F" ManuallyRouted="false" />
+      <Diagram DiagramId="ae5e24c42a274a4d93d061e733eb9c18" Name="Diagram1">
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Admin" Width="1.5" PointX="3.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Bus" Width="1.5" PointX="3.75" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Conductor" Width="1.5" PointX="1.5" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.FavouriteStop" Width="1.5" PointX="6" PointY="20.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.IsAssigned" Width="1.5" PointX="3" PointY="12.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Notification" Width="1.5" PointX="3.75" PointY="27" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Parent" Width="1.5" PointX="1.5" PointY="22.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Pass" Width="1.5" PointX="3.75" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Reach" Width="1.5" PointX="6" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Route" Width="1.5" PointX="0.75" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.RouteStop" Width="1.5" PointX="3" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Start" Width="1.5" PointX="3" PointY="15" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Stop" Width="1.5" PointX="0.75" PointY="15.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Student" Width="1.5" PointX="3.75" PointY="21.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.TracksLocation" Width="1.5" PointX="6" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.Travel" Width="1.5" PointX="6" PointY="15.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="BusPassWithQRScanModel.User" Width="1.5" PointX="1.5" PointY="0.75" IsExpanded="true" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Admin__user_id__44FF419A" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Bus__conductor_i__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__IsAssigne__bus_i__5BE2A6F2" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Reaches__bus_id__6754599E" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Starts__bus_id__6383C8BA" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__TracksLoc__bus_i__5FB337D6" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Travels__bus_id__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Conductor__user___4222D4EF" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Favourite__stop___4CA06362" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Favourite__stude__4D94879B" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__IsAssigne__route__5CD6CB2B" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Notificat__user___47DBAE45" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Parent__user_id__38996AB5" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Student__parent___3E52440B" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Student__pass_id__3F466844" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Travels__pass_id__5535A963" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Reaches__route_i__68487DD7" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Reaches__stop_id__693CA210" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__RouteStop__route__6C190EBB" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Starts__route_id__6477ECF3" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__TracksLoc__route__60A75C0F" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Travels__route_i__5812160E" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__RouteStop__stop___6D0D32F4" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Travels__stop_id__59063A47" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Student__user_id__3D5E1FD2" ManuallyRouted="false" />
+        <AssociationConnector Association="BusPassWithQRScanModel.FK__Travels__student__5629CD9C" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

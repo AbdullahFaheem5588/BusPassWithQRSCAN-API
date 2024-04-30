@@ -50,19 +50,20 @@ namespace WebApi.Models
 
     public class ApiStudent
     {
-        public int PassId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Gender { get; set; }
         public string RegNo { get; set; }
         public string Contact { get; set; }
-        public string QrCode { get; set; }
-        public int TotalJourneys { get; set; }
-        public int RemainingJourneys { get; set; }
-        public string PassExpiry { get; set; }
-        public int ParentId { get; set; }
-        public int UserId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
+        public string PassStatus { get; set; }
+        public string PassExpiry { get; set; }
+        public int TotalJourneys { get; set; }
+        public int RemainingJourneys { get; set; }
+        public int ParentId { get; set; }
+        public int UserId { get; set; }
+        public int PassId { get; set; }
     }
     public class ChildTimings
     {

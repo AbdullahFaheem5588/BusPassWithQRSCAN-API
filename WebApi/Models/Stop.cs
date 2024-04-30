@@ -18,23 +18,23 @@ namespace WebApi.Models
         public Stop()
         {
             this.FavouriteStops = new HashSet<FavouriteStop>();
+            this.Reaches = new HashSet<Reach>();
             this.RouteStops = new HashSet<RouteStop>();
-            this.StudentHistories = new HashSet<StudentHistory>();
+            this.Travels = new HashSet<Travel>();
         }
     
         public int id { get; set; }
-        public Nullable<int> stopno { get; set; }
         public string name { get; set; }
-        public Nullable<System.TimeSpan> pickup { get; set; }
-        public Nullable<System.TimeSpan> dropup { get; set; }
         public string latitude { get; set; }
         public string longitude { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FavouriteStop> FavouriteStops { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Reach> Reaches { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RouteStop> RouteStops { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StudentHistory> StudentHistories { get; set; }
+        public virtual ICollection<Travel> Travels { get; set; }
     }
 }

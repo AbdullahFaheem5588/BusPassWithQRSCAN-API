@@ -12,14 +12,16 @@ namespace WebApi.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class RouteStop
+    public partial class Reach
     {
         public int id { get; set; }
-        public Nullable<System.TimeSpan> stoptiming { get; set; }
-        public Nullable<System.TimeSpan> eststoptiming { get; set; }
+        public Nullable<System.DateTime> date { get; set; }
+        public Nullable<System.TimeSpan> time { get; set; }
+        public Nullable<int> bus_id { get; set; }
         public Nullable<int> route_id { get; set; }
         public Nullable<int> stop_id { get; set; }
     
+        public virtual Bus Bus { get; set; }
         public virtual Route Route { get; set; }
         public virtual Stop Stop { get; set; }
     }

@@ -17,21 +17,28 @@ namespace WebApi.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Bus()
         {
-            this.BusHistories = new HashSet<BusHistory>();
-            this.StudentHistories = new HashSet<StudentHistory>();
+            this.IsAssigneds = new HashSet<IsAssigned>();
+            this.Reaches = new HashSet<Reach>();
+            this.Starts = new HashSet<Start>();
+            this.TracksLocations = new HashSet<TracksLocation>();
+            this.Travels = new HashSet<Travel>();
         }
     
-        public int busno { get; set; }
+        public int id { get; set; }
         public string regno { get; set; }
         public Nullable<int> totalSeats { get; set; }
-        public Nullable<int> route_id { get; set; }
         public Nullable<int> conductor_id { get; set; }
     
         public virtual Conductor Conductor { get; set; }
-        public virtual Route Route { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BusHistory> BusHistories { get; set; }
+        public virtual ICollection<IsAssigned> IsAssigneds { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StudentHistory> StudentHistories { get; set; }
+        public virtual ICollection<Reach> Reaches { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Start> Starts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TracksLocation> TracksLocations { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Travel> Travels { get; set; }
     }
 }

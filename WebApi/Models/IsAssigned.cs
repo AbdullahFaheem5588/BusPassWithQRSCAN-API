@@ -12,16 +12,13 @@ namespace WebApi.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class BusHistory
+    public partial class IsAssigned
     {
         public int id { get; set; }
-        public Nullable<System.DateTime> date { get; set; }
-        public Nullable<System.TimeSpan> time { get; set; }
-        public Nullable<int> BookedSeats { get; set; }
-        public string latitude { get; set; }
-        public string longitude { get; set; }
-        public Nullable<int> bus_busno { get; set; }
+        public Nullable<int> bus_id { get; set; }
+        public Nullable<int> route_id { get; set; }
     
         public virtual Bus Bus { get; set; }
+        public virtual Route Route { get; set; }
     }
 }

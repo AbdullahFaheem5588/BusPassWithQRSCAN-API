@@ -4,194 +4,233 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.UI.WebControls.WebParts;
 using WebApi.Models;
 
 namespace WebApi.Controllers
 {
     public class UsersController : ApiController
     {
-        BusPassWithQRCodeEntities db = new BusPassWithQRCodeEntities();
-        [HttpGet]
-        public HttpResponseMessage GetAllUsers()
-        {
-            List<User> usersFromDb = db.Users.ToList();
+        BusPassWithQRScanEntities db = new BusPassWithQRScanEntities();
+        //[HttpGet]
+        //public HttpResponseMessage GetAllUsers()
+        //{
+        //    List<User> usersFromDb = db.Users.ToList();
+        //    var passesFromDb = db.Passes.ToList();
 
-            var users = usersFromDb.Select(user => new SingleUser
-            {
-                Admins = user.Admins.Select(admin => new ApiAdmin
-                {
-                    Id = admin.id,
-                    Name = admin.name,
-                    Contact = admin.contact,
-                    Gender = admin.gender,
-                    UserId = Convert.ToInt32(admin.user_id),
-                    UserName = user.username,
-                    Password = user.password,
-                }).FirstOrDefault(),
-                Conductors = user.Conductors.Select(conductor => new ApiConductor
-                {
-                    Id = conductor.id,
-                    Name = conductor.name,
-                    Contact = conductor.contact,
-                    UserId = Convert.ToInt32(conductor.user_id),
-                    UserName = user.username,
-                    Password = user.password,
-                }).FirstOrDefault(),
-                Parents = user.Parents.Select(parent => new ApiParent
-                {
-                    Id = parent.id,
-                    Name = parent.name,
-                    Contact = parent.contact,
-                    UserId = Convert.ToInt32(parent.user_id),
-                    UserName = user.username,
-                    Password = user.password,
-                    ChildrenEnroll = Convert.ToInt32(parent.childrenEnroll),
-                }).FirstOrDefault(),
-                Students = user.Students.Select(student => new ApiStudent
-                {
-                    PassId = student.passid,
-                    Name = student.name,
-                    Contact = student.contact,
-                    Gender = student.gender,
-                    RegNo = student.regno,
-                    QrCode = student.qrcode,
-                    TotalJourneys = Convert.ToInt32(student.totalJourney),
-                    RemainingJourneys = Convert.ToInt32(student.remainingJourney),
-                    PassExpiry = student.passExpiray.ToString(),
-                    ParentId = Convert.ToInt32(student.parent_id),
-                    UserId = Convert.ToInt32(student.user_id),
-                    UserName = user.username,
-                    Password = user.password,
-                }).FirstOrDefault(),
-            }).ToList();
+        //    var users = usersFromDb.Select(user => new SingleUser
+        //    {
+        //        Admins = user.Admins.Select(admin => new ApiAdmin
+        //        {
+        //            Id = admin.id,
+        //            Name = admin.name,
+        //            Contact = admin.contact,
+        //            Gender = admin.gender,
+        //            UserId = Convert.ToInt32(admin.user_id),
+        //            UserName = user.username,
+        //            Password = user.password,
+        //        }).FirstOrDefault(),
+        //        Conductors = user.Conductors.Select(conductor => new ApiConductor
+        //        {
+        //            Id = conductor.id,
+        //            Name = conductor.name,
+        //            Contact = conductor.contact,
+        //            UserId = Convert.ToInt32(conductor.user_id),
+        //            UserName = user.username,
+        //            Password = user.password,
+        //        }).FirstOrDefault(),
+        //        Parents = user.Parents.Select(parent => new ApiParent
+        //        {
+        //            Id = parent.id,
+        //            Name = parent.name,
+        //            Contact = parent.contact,
+        //            UserId = Convert.ToInt32(parent.user_id),
+        //            UserName = user.username,
+        //            Password = user.password,
+        //            ChildrenEnroll = Convert.ToInt32(parent.childrenenroll),
+        //        }).FirstOrDefault(),
+        //        Students = user.Students.Select(student => new ApiStudent
+        //        {
+        //            Id = student.id,
+        //            Name = student.name,
+        //            Contact = student.contact,
+        //            Gender = student.gender,
+        //            RegNo = student.regno,
+        //            ParentId = Convert.ToInt32(student.parent_id),
+        //            UserId = Convert.ToInt32(student.user_id),
+        //            UserName = user.username,
+        //            Password = user.password,
+        //            PassId = Convert.ToInt32(student.pass_id),
+        //        }).FirstOrDefault(),
+        //}).ToList();
 
-            var userMapping = new ClassStructures
-            {
-                Users = users
-            };
+        //    var userMapping = new ClassStructures
+        //    {
+        //        Users = users
+        //    };
 
-            return Request.CreateResponse(HttpStatusCode.OK, userMapping);
-        }
+        //    return Request.CreateResponse(HttpStatusCode.OK, userMapping);
+        //}
 
         [HttpPost]
         public HttpResponseMessage InsertStudent(ApiStudent student)
         {
             try
             {
-                User newUser = new User
-                {
-                    username = student.UserName,
-                    password = student.Password,
-                    role = "Student",
-                };
-                db.Users.Add(newUser);
-                db.SaveChanges();
+                var existingStudent = db.Users.FirstOrDefault(u => u.username == student.UserName);
+                if (existingStudent == null) {
+                    User newUser = new User
+                    {
+                        username = student.UserName,
+                        password = student.Password,
+                        role = "Student",
+                    };
+                    db.Users.Add(newUser);
+                    db.SaveChanges();
 
-                Student newStudent = new Student
+                    Pass newPass = new Pass
+                    {
+                        status = student.PassStatus,
+                        passexpiry = DateTime.Parse(student.PassExpiry),
+                        totaljourneys = student.TotalJourneys,
+                        remainingjourneys = student.RemainingJourneys
+                    };
+                    db.Passes.Add(newPass);
+                    db.SaveChanges();
+                    Student newStudent = new Student
+                    {
+                        name = student.Name,
+                        gender = student.Gender,
+                        regno = student.RegNo,
+                        contact = student.Contact,
+                        parent_id = student.ParentId,
+                        user_id = newUser.id,
+                        pass_id = newPass.id,
+                    };
+                    db.Students.Add(newStudent);
+                    db.SaveChanges();
+                    Parent exitingParent = db.Parents.Find(student.ParentId);
+                    exitingParent.childrenenroll += 1;
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Student Inserted Successfully");
+                }
+                else
                 {
-                    name = student.Name,
-                    gender = student.Gender,
-                    regno = student.RegNo,
-                    contact = student.Contact,
-                    qrcode = student.QrCode,
-                    totalJourney = student.TotalJourneys,
-                    remainingJourney = student.RemainingJourneys,
-                    passExpiray = DateTime.Parse(student.PassExpiry),
-                    parent_id = student.ParentId,
-                    user_id = newUser.id,
-                };
-                db.Students.Add(newStudent);
-                db.SaveChanges();
-                Parent exitingParent = db.Parents.Find(student.ParentId);
-                exitingParent.childrenEnroll += 1;
-                db.SaveChanges();
-                return Request.CreateResponse(HttpStatusCode.OK, "Student Inserted Successfully");
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Username Already Taken!");
+                }
             }
             catch
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error Inserting Student");
             }
         }
+        [HttpPost]
         public HttpResponseMessage InsertAdmin(ApiAdmin admin)
         {
             try
             {
-                User newUser = new User
+                var existingAdmin = db.Users.FirstOrDefault(u => u.username == admin.UserName);
+                if (existingAdmin == null)
                 {
-                    username = admin.UserName,
-                    password = admin.Password,
-                    role = "Admin",
-                };
-                db.Users.Add(newUser);
-                db.SaveChanges();
+                    User newUser = new User
+                    {
+                        username = admin.UserName,
+                        password = admin.Password,
+                        role = "Admin",
+                    };
+                    db.Users.Add(newUser);
+                    db.SaveChanges();
 
-                Admin newAdmin = new Admin
+                    Admin newAdmin = new Admin
+                    {
+                        name = admin.Name,
+                        gender = admin.Gender,
+                        contact = admin.Contact,
+                        user_id = newUser.id,
+                    };
+                    db.Admins.Add(newAdmin);
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Admin Inserted Successfully");
+                }
+                else
                 {
-                    name = admin.Name,
-                    gender = admin.Gender,
-                    contact = admin.Contact,
-                    user_id = newUser.id,
-                };
-                db.Admins.Add(newAdmin);
-                db.SaveChanges();
-                return Request.CreateResponse(HttpStatusCode.OK, "Admin Inserted Successfully");
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Username Already Taken!");
+                }
             }
             catch
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error Inserting Admin");
             }
         }
+        [HttpPost]
         public HttpResponseMessage InsertParent(ApiParent parent)
         {
             try
             {
-                User newUser = new User
+                var existingParent = db.Users.FirstOrDefault(u => u.username == parent.UserName);
+                if (existingParent == null)
                 {
-                    username = parent.UserName,
-                    password = parent.Password,
-                    role = "Parent",
-                };
-                db.Users.Add(newUser);
-                db.SaveChanges();
+                    User newUser = new User
+                    {
+                        username = parent.UserName,
+                        password = parent.Password,
+                        role = "Parent",
+                    };
+                    db.Users.Add(newUser);
+                    db.SaveChanges();
 
-                Parent newParent = new Parent
+                    Parent newParent = new Parent
+                    {
+                        name = parent.Name,
+                        contact = parent.Contact,
+                        user_id = newUser.id,
+                        childrenenroll = 0,
+                    };
+                    db.Parents.Add(newParent);
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Parent Inserted Successfully");
+                }
+                else
                 {
-                    name = parent.Name,
-                    contact = parent.Contact,
-                    user_id = newUser.id,
-                    childrenEnroll = 0,
-                };
-                db.Parents.Add(newParent);
-                db.SaveChanges();
-                return Request.CreateResponse(HttpStatusCode.OK, "Parent Inserted Successfully");
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Username Already Taken!");
+                }
             }
             catch
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error Inserting Parent");
             }
         }
+        [HttpPost]
         public HttpResponseMessage InsertConductor(ApiConductor conductor)
         {
             try
             {
-                User newUser = new User
+                var existingConductor = db.Users.FirstOrDefault(u => u.username == conductor.UserName);
+                if (existingConductor == null)
                 {
-                    username = conductor.UserName,
-                    password = conductor.Password,
-                    role = "Conductor",
-                };
-                db.Users.Add(newUser);
-                db.SaveChanges();
+                    User newUser = new User
+                    {
+                        username = conductor.UserName,
+                        password = conductor.Password,
+                        role = "Conductor",
+                    };
+                    db.Users.Add(newUser);
+                    db.SaveChanges();
 
-                Conductor newConductor = new Conductor
+                    Conductor newConductor = new Conductor
+                    {
+                        name = conductor.Name,
+                        contact = conductor.Contact,
+                        user_id = newUser.id,
+                    };
+                    db.Conductors.Add(newConductor);
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Conductor Inserted Successfully");
+                }
+                else
                 {
-                    name = conductor.Name,
-                    contact = conductor.Contact,
-                    user_id = newUser.id,
-                };
-                db.Conductors.Add(newConductor);
-                db.SaveChanges();
-                return Request.CreateResponse(HttpStatusCode.OK, "Conductor Inserted Successfully");
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Username Already Taken!");
+                }
             }
             catch
             {
@@ -227,7 +266,7 @@ namespace WebApi.Controllers
                     {
                         Name = parentDetails.name,
                         Contact = parentDetails.contact,
-                        ChildrenEnroll = Convert.ToInt32(parentDetails.childrenEnroll),
+                        ChildrenEnroll = Convert.ToInt32(parentDetails.childrenenroll),
                         Id = parentDetails.id,
                         UserId = user.id,
                         UserName = user.username,
@@ -254,20 +293,23 @@ namespace WebApi.Controllers
                     var studentDetails = db.Students.FirstOrDefault(s => s.user_id == id);
                     ApiStudent student = new ApiStudent
                     {
+                        Id = studentDetails.id,
                         Name = studentDetails.name,
                         Contact = studentDetails.contact,
-                        PassId = studentDetails.passid,
+                        PassId = Convert.ToInt32(studentDetails.pass_id),
                         UserId = user.id,
                         Gender = studentDetails.gender,
                         ParentId = Convert.ToInt32(studentDetails.parent_id),
-                        PassExpiry = studentDetails.passExpiray.ToString(),
                         Password = user.password,
                         UserName = user.username,
-                        QrCode = studentDetails.qrcode,
                         RegNo = studentDetails.regno,
-                        RemainingJourneys = Convert.ToInt32(studentDetails.remainingJourney),
-                        TotalJourneys = Convert.ToInt32(studentDetails.totalJourney),
                     };
+                    var passDetails = db.Passes.FirstOrDefault(p => p.id == student.PassId);
+                    student.PassStatus = passDetails.status;
+                    student.PassExpiry = passDetails.passexpiry.ToString();
+                    student.RemainingJourneys = Convert.ToInt32(passDetails.remainingjourneys);
+                    student.TotalJourneys = Convert.ToInt32(passDetails.totaljourneys);
+
                     singleUser.Students = student;
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, singleUser);
@@ -278,17 +320,16 @@ namespace WebApi.Controllers
             }
         }
         [HttpPut]
-        public HttpResponseMessage UpdateCredentials(int id, String username, String oldPassword, String newPassword)
+        public HttpResponseMessage ChangePassword(int id, String oldPassword, String newPassword)
         {
             User user = db.Users.Find(id);
             if (user != null)
             {
-                user.username = username;
-                if(user.password == oldPassword)
+                if (user.password == oldPassword)
                 {
                     user.password = newPassword;
                     db.SaveChanges();
-                    return Request.CreateResponse(HttpStatusCode.OK, "User Credentials Updated");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Password Changed Successfully");
                 }
                 else
                 {
@@ -310,6 +351,8 @@ namespace WebApi.Controllers
                 {
                     var student = db.Students.FirstOrDefault(s => s.user_id == id);
                     db.Students.Remove(student);
+                    var pass = db.Passes.FirstOrDefault(p => p.id == student.pass_id);
+                    db.Passes.Remove(pass);
                 }
                 else if (user.role == "Parent")
                 {
@@ -339,7 +382,7 @@ namespace WebApi.Controllers
         public HttpResponseMessage Login(string username, string password)
         {
             SingleUser singleUser = new SingleUser();
-            User user = db.Users.FirstOrDefault(u =>  u.username == username);
+            User user = db.Users.FirstOrDefault(u => u.username == username);
             if (user != null)
             {
                 if (user.password == password)
@@ -366,7 +409,7 @@ namespace WebApi.Controllers
                         {
                             Name = parentDetails.name,
                             Contact = parentDetails.contact,
-                            ChildrenEnroll = Convert.ToInt32(parentDetails.childrenEnroll),
+                            ChildrenEnroll = Convert.ToInt32(parentDetails.childrenenroll),
                             Id = parentDetails.id,
                             UserId = user.id,
                             UserName = user.username,
@@ -393,20 +436,23 @@ namespace WebApi.Controllers
                         var studentDetails = db.Students.FirstOrDefault(s => s.user_id == user.id);
                         ApiStudent student = new ApiStudent
                         {
+                            Id = studentDetails.id,
                             Name = studentDetails.name,
                             Contact = studentDetails.contact,
-                            PassId = studentDetails.passid,
+                            PassId = Convert.ToInt32(studentDetails.pass_id),
                             UserId = user.id,
                             Gender = studentDetails.gender,
                             ParentId = Convert.ToInt32(studentDetails.parent_id),
-                            PassExpiry = studentDetails.passExpiray.ToString(),
                             Password = user.password,
                             UserName = user.username,
-                            QrCode = studentDetails.qrcode,
                             RegNo = studentDetails.regno,
-                            RemainingJourneys = Convert.ToInt32(studentDetails.remainingJourney),
-                            TotalJourneys = Convert.ToInt32(studentDetails.totalJourney),
                         };
+                        var passDetails = db.Passes.FirstOrDefault(p => p.id == student.PassId);
+                        student.PassStatus = passDetails.status;
+                        student.PassExpiry = passDetails.passexpiry.ToString();
+                        student.RemainingJourneys = Convert.ToInt32(passDetails.remainingjourneys);
+                        student.TotalJourneys = Convert.ToInt32(passDetails.totaljourneys);
+
                         singleUser.Students = student;
                     }
                 }
@@ -430,7 +476,7 @@ namespace WebApi.Controllers
                 List<ApiNotification> apiNotifications = new List<ApiNotification>();
                 if (notifications.Count > 0)
                 {
-                    for(int i=0; i<notifications.Count; i++)
+                    for (int i = 0; i < notifications.Count; i++)
                     {
                         apiNotifications.Add(new ApiNotification
                         {
@@ -454,7 +500,7 @@ namespace WebApi.Controllers
             }
         }
         [HttpPost]
-        public HttpResponseMessage NotifyUser(int  userId, string userRole, string Type, string Description)
+        public HttpResponseMessage NotifyUser(int userId, string userRole, string Type, string Description)
         {
             try
             {
@@ -475,29 +521,29 @@ namespace WebApi.Controllers
             }
         }
         [HttpPost]
-        //public HttpResponseMessage MakeAnnouncement(string Description)
-        //{
-        //    try
-        //    {
-        //        List<User> user = db.Users.ToList();
-        //        for (int i = 0;i < user.Count; i++)
-        //        {
-        //            Notification notification = new Notification();
-        //            notification.date = DateTime.Today;
-        //            notification.time = DateTime.Now.TimeOfDay;
-        //            notification.userrole = user[i].role;
-        //            notification.type = "announcement";
-        //            notification.description = Description;
-        //            notification.user_id = user[i].id;
-        //            db.Notifications.Add(notification);
-        //            db.SaveChanges();
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, "All Users Notified");
-        //    }
-        //    catch
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
-        //    }
-        //}
+        public HttpResponseMessage MakeAnnouncement(string Description)
+        {
+            try
+            {
+                List<User> user = db.Users.ToList();
+                for (int i = 0; i < user.Count; i++)
+                {
+                    Notification notification = new Notification();
+                    notification.date = DateTime.Today;
+                    notification.time = DateTime.Now.TimeOfDay;
+                    notification.userrole = user[i].role;
+                    notification.type = "Announcement";
+                    notification.description = Description;
+                    notification.user_id = user[i].id;
+                    db.Notifications.Add(notification);
+                    db.SaveChanges();
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, "All Users Notified");
+            }
+            catch
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+            }
+        }
     }
 }
