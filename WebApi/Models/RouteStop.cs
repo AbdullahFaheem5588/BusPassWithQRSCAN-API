@@ -16,7 +16,6 @@ namespace WebApi.Models
     {
         public int id { get; set; }
         public Nullable<System.TimeSpan> stoptiming { get; set; }
-        public Nullable<System.TimeSpan> eststoptiming { get; set; }
         public Nullable<int> route_id { get; set; }
         public Nullable<int> stop_id { get; set; }
     

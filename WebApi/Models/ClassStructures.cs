@@ -92,21 +92,16 @@ namespace WebApi.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int StopNo { get; set; }
-        public string Pickup { get; set; }
-        public string Dropup { get; set; }
+        public string Timing { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
-        public int Notification { get; set; }
-        public int Route {  get; set; }
+        public int Route { get; set; }
     }
     public class ApiStops
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int StopNo { get; set; }
-        public string Pickup { get; set; }
-        public string Dropup { get; set; }
+        public string Timing { get; set; }
         public string Logitude { get; set; }
         public string Latitude { get; set; }
         public int Route { get; set; }

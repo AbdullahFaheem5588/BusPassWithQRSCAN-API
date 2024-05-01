@@ -11,32 +11,44 @@ namespace WebApi.Controllers
     public class StopsController : ApiController
     {
         BusPassWithQRScanEntities db = new BusPassWithQRScanEntities();
-        //[HttpGet]
-        //public HttpResponseMessage GetAllStop()
-        //{
-        //    try
-        //    {
-        //        var stops = db.Stops.ToList();
-        //        var routeStop = db.RouteStops.ToList();
-        //        List<ApiStops> apiStops = stops.Select(stop => new ApiStops
-        //        {
-        //            Id = stop.id,
-        //            Name = stop.name,
-        //            StopNo = Convert.ToInt32(stop.stopno),
-        //            Pickup = stop.pickup.ToString(),
-        //            Dropup = stop.dropup.ToString(),
-        //            Logitude = stop.longitude,
-        //            Latitude = stop.latitude,
-        //            Route = Convert.ToInt32(routeStop.Where(r => r.stop_id == stop.id).Select(u => u.route_id).FirstOrDefault()),
-        //        }).ToList();
-        //        return Request.CreateResponse(HttpStatusCode.OK, res);
-        //    }
-        //    catch
-        //    {
+        [HttpGet]
+        public HttpResponseMessage GetAllStops()
+        {
+            try
+            {
+                var stops = db.Stops.ToList();
+                var routeStop = db.RouteStops.ToList();
+                var route = db.Routes.ToList();
+                List<List<ApiStops>> apiRoute = new List<List<ApiStops>>();
+                for(int i=0; i<route.Count; i++)
+                {
+                    List<ApiStops> apiStops = new List<ApiStops>();
+                    var stopsInRoute = routeStop.Where(rs => rs.route_id == route[i].id).Select(rs => new
+                    {
+                        StopId = rs.stop_id,
+                        StopTiming = rs.stoptiming,
+                    }).ToList();
+                    for(int j=0; j<stopsInRoute.Count; j++)
+                    {
+                        ApiStops apiStop = new ApiStops();
+                        apiStop.Id = Convert.ToInt32(stopsInRoute[j].StopId);
+                        apiStop.Name = stops.FirstOrDefault(s => s.id == apiStop.Id)?.name;
+                        apiStop.Timing = stopsInRoute[j].StopTiming.ToString();
+                        apiStop.Latitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.latitude;
+                        apiStop.Logitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.longitude;
+                        apiStop.Route = route[i].id;
+                        apiStops.Add(apiStop);
+                    }
+                    apiRoute.Add(apiStops);
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, apiRoute);
+            }
+            catch
+            {
 
-        //        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
-        //    }
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+            }
 
-        //}
+        }
     }
 }

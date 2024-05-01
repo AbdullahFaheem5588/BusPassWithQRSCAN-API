@@ -97,7 +97,7 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="totalstops" Type="int" />
+          <Property Name="Title" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="RouteStop">
           <Key>
@@ -105,7 +105,6 @@
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="stoptiming" Type="time" Precision="7" />
-          <Property Name="eststoptiming" Type="time" Precision="7" />
           <Property Name="route_id" Type="int" />
           <Property Name="stop_id" Type="int" />
         </EntityType>
@@ -729,7 +728,7 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="totalstops" Type="Int32" />
+          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="IsAssigneds" Relationship="Self.FK__IsAssigne__route__5CD6CB2B" FromRole="Route" ToRole="IsAssigned" />
           <NavigationProperty Name="Reaches" Relationship="Self.FK__Reaches__route_i__68487DD7" FromRole="Route" ToRole="Reaches" />
           <NavigationProperty Name="RouteStops" Relationship="Self.FK__RouteStop__route__6C190EBB" FromRole="Route" ToRole="RouteStop" />
@@ -743,7 +742,6 @@
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="stoptiming" Type="Time" Precision="7" />
-          <Property Name="eststoptiming" Type="Time" Precision="7" />
           <Property Name="route_id" Type="Int32" />
           <Property Name="stop_id" Type="Int32" />
           <NavigationProperty Name="Route" Relationship="Self.FK__RouteStop__route__6C190EBB" FromRole="RouteStop" ToRole="Route" />
@@ -1380,7 +1378,7 @@
             <EntityTypeMapping TypeName="BusPassWithQRScanModel.Route">
               <MappingFragment StoreEntitySet="Route">
                 <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="totalstops" ColumnName="totalstops" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1389,7 +1387,6 @@
               <MappingFragment StoreEntitySet="RouteStop">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="stoptiming" ColumnName="stoptiming" />
-                <ScalarProperty Name="eststoptiming" ColumnName="eststoptiming" />
                 <ScalarProperty Name="route_id" ColumnName="route_id" />
                 <ScalarProperty Name="stop_id" ColumnName="stop_id" />
               </MappingFragment>
