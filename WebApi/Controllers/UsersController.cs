@@ -669,6 +669,58 @@ namespace WebApi.Controllers
                     allHistory.reachHistory = apiReaches;
                     return Request.CreateResponse(HttpStatusCode.OK, allHistory);
                 }
+                else if (userRole == "Admin")
+                {
+                    AllHistory allHistory = new AllHistory();
+                    var travelFromDB = db.Travels.ToList();
+                    var startsFromDB = db.Starts.ToList();
+                    var reachesFromDB = db.Reaches.ToList();
+                    List<ApiTravel> apiTravel = new List<ApiTravel>();
+                    List<ApiStart> apiStart = new List<ApiStart>();
+                    List<ApiReach> apiReaches = new List<ApiReach>();
+                    for (int i = 0; i < travelFromDB.Count; i++)
+                    {
+                        apiTravel.Add(new ApiTravel
+                        {
+                            Id = travelFromDB[i].id,
+                            Date = travelFromDB[i].date.ToString(),
+                            Time = travelFromDB[i].time.ToString(),
+                            Type = travelFromDB[i].type.ToString(),
+                            PassId = Convert.ToInt32(travelFromDB[i].pass_id),
+                            StudentId = Convert.ToInt32(travelFromDB[i].student_id),
+                            BusId = Convert.ToInt32(travelFromDB[i].bus_id),
+                            RouteId = Convert.ToInt32(travelFromDB[i].route_id),
+                            StopId = Convert.ToInt32(travelFromDB[i].stop_id),
+                        });
+                    }
+                    allHistory.travelHistory = apiTravel;
+                    for (int i = 0; i < startsFromDB.Count; i++)
+                    {
+                        apiStart.Add(new ApiStart
+                        {
+                            Id = startsFromDB[i].id,
+                            Date = startsFromDB[i].date.ToString(),
+                            Time = startsFromDB[i].time.ToString(),
+                            BusId = Convert.ToInt32(startsFromDB[i].bus_id),
+                            RouteId = Convert.ToInt32(startsFromDB[i].route_id),
+                        });
+                    }
+                    allHistory.startHistory = apiStart;
+                    for (int i = 0; i < reachesFromDB.Count; i++)
+                    {
+                        apiReaches.Add(new ApiReach
+                        {
+                            Id = reachesFromDB[i].id,
+                            Date = reachesFromDB[i].date.ToString(),
+                            Time = reachesFromDB[i].time.ToString(),
+                            BusId = Convert.ToInt32(reachesFromDB[i].bus_id),
+                            RouteId = Convert.ToInt32(reachesFromDB[i].route_id),
+                            StopId = Convert.ToInt32(reachesFromDB[i].stop_id),
+                        });
+                    }
+                    allHistory.reachHistory = apiReaches;
+                    return Request.CreateResponse(HttpStatusCode.OK, allHistory);
+                }
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, "Invalid User Id!");

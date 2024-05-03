@@ -8,9 +8,9 @@ Foreign key(user_id) references Users(id),
 id int not null identity(1,1) primary key,
 date date,
 time time,
-userrole varchar(50),
 type varchar(100),
 description varchar(max),
+notificationRead int,
 user_id int ,
 foreign key(user_id) references Users(id)
 )create table Stops(
@@ -68,3 +68,25 @@ stoptiming time,
 route_id int,foreign key(route_id) references Route(id),stop_id int,foreign key(stop_id) references Stops(id)
 )
 -------------------------------------------------------------------------------------------------------
+
+Select * from Admin
+Select * from Bus
+Select * from Conductor
+Select * from FavouriteStops
+Select * from IsAssigned
+Select * from Notifications
+Select * from Parent
+Select * from Pass
+Select * from Reaches
+Select * from Route
+Select * from RouteStop
+Select * from Starts
+Select * from Stops
+Select * from Student
+Select * from TracksLocation
+Select * from Travels
+Select * from Users
+
+Select s.*,p.* from Student s, Pass p where s.pass_id = p.id and parent_id = 1
+
+Update Travels set date = GETDATE()
