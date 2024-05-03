@@ -469,7 +469,7 @@ namespace WebApi.Controllers
         }
         [HttpGet]
         public HttpResponseMessage GetUserNotification(int id)
-        {
+        {   
             try
             {
                 List<Notification> notifications = db.Notifications.Where(n => n.user_id == id).ToList();
@@ -485,8 +485,8 @@ namespace WebApi.Controllers
                             Description = notifications[i].description,
                             Time = notifications[i].time.ToString(),
                             Type = notifications[i].type,
-                            UserRole = notifications[i].userrole,
                             UserID = Convert.ToInt16(notifications[i].user_id),
+                            NotificationRead = Convert.ToInt16(notifications[i].notificationRead),
                         });
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, apiNotifications);
@@ -500,17 +500,17 @@ namespace WebApi.Controllers
             }
         }
         [HttpPost]
-        public HttpResponseMessage NotifyUser(int userId, string userRole, string Type, string Description)
+        public HttpResponseMessage NotifyUser(int userId, string Type, string Description)
         {
             try
             {
                 Notification notification = new Notification();
                 notification.date = DateTime.Today;
                 notification.time = DateTime.Now.TimeOfDay;
-                notification.userrole = userRole;
                 notification.type = Type;
                 notification.description = Description;
                 notification.user_id = userId;
+                notification.notificationRead = 0;
                 db.Notifications.Add(notification);
                 db.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK, "User Notified");
@@ -531,7 +531,6 @@ namespace WebApi.Controllers
                     Notification notification = new Notification();
                     notification.date = DateTime.Today;
                     notification.time = DateTime.Now.TimeOfDay;
-                    notification.userrole = user[i].role;
                     notification.type = "Announcement";
                     notification.description = Description;
                     notification.user_id = user[i].id;
@@ -539,6 +538,156 @@ namespace WebApi.Controllers
                     db.SaveChanges();
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, "All Users Notified");
+            }
+            catch
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+            }
+        }
+        [HttpGet]
+        public HttpResponseMessage GetUserHistory(int id)
+        {
+            try
+            {
+                string userRole = db.Users.FirstOrDefault(u => u.id == id)?.role;
+                if (userRole == "Student")
+                {
+                    var travelFromDB = db.Travels
+                        .Join(db.Students, t => t.student_id, s => s.id, (t, s) => new { Travel = t, Student = s })
+                        .Join(db.Users, ts => ts.Student.user_id, u => u.id, (ts, u) => new { Travel = ts.Travel, User = u })
+                        .Where(ut => ut.User.id == id)
+                        .Select(ut => ut.Travel).ToList();
+                    List<ApiTravel> apiTravel = new List<ApiTravel>();
+                    for (int i = 0; i < travelFromDB.Count; i++)
+                    {
+                        apiTravel.Add(new ApiTravel
+                        {
+                            Id = travelFromDB[i].id,
+                            Date = travelFromDB[i].date.ToString(),
+                            Time = travelFromDB[i].time.ToString(),
+                            Type = travelFromDB[i].type.ToString(),
+                            PassId = Convert.ToInt32(travelFromDB[i].pass_id),
+                            StudentId = Convert.ToInt32(travelFromDB[i].student_id),
+                            BusId = Convert.ToInt32(travelFromDB[i].bus_id),
+                            RouteId = Convert.ToInt32(travelFromDB[i].route_id),
+                            StopId = Convert.ToInt32(travelFromDB[i].stop_id),
+                        });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, apiTravel);
+                }
+                else if (userRole == "Parent")
+                {
+                    var childIdsFromDB = db.Students
+                        .Join(db.Users, s => s.parent_id, u => u.id, (s, u) => new { Student = s, User = u })
+                        .Where(su => su.User.id == id).Select(su => su.Student.id).ToList();
+                    List<List<ApiTravel>> apiTravel = new List<List<ApiTravel>>();
+                    for (int i = 0; i < childIdsFromDB.Count; i++)
+                    {
+                        var childId = Convert.ToInt32(childIdsFromDB[i]);
+                        List<ApiTravel> singleChildTravel = new List<ApiTravel>();
+                        var travelFromDB = db.Travels
+                        .Join(db.Students, t => t.student_id, s => s.id, (t, s) => new { Travel = t, Student = s })
+                        .Where(ut => ut.Student.id == childId)
+                        .Select(ut => ut.Travel).ToList();
+                        for (int j = 0; j < travelFromDB.Count; j++)
+                        {
+                            singleChildTravel.Add(new ApiTravel
+                            {
+                                Id = travelFromDB[j].id,
+                                Date = travelFromDB[j].date.ToString(),
+                                Time = travelFromDB[j].time.ToString(),
+                                Type = travelFromDB[j].type.ToString(),
+                                PassId = Convert.ToInt32(travelFromDB[j].pass_id),
+                                StudentId = Convert.ToInt32(travelFromDB[j].student_id),
+                                BusId = Convert.ToInt32(travelFromDB[j].bus_id),
+                                RouteId = Convert.ToInt32(travelFromDB[j].route_id),
+                                StopId = Convert.ToInt32(travelFromDB[j].stop_id),
+                            });
+                        }
+                        apiTravel.Add(singleChildTravel);
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, apiTravel);
+                }
+                else if (userRole == "Conductor")
+                {
+                    AllHistory allHistory = new AllHistory();
+                    var travelFromDB = db.Travels.Join(db.Buses, t => t.bus_id, b => b.id, (t, b) => new { Travel = t, Bus = b })
+                    .Join(db.Conductors, tb => tb.Bus.conductor_id, c => c.id, (tb, c) => new { Travel = tb.Travel, Conductor = c })
+                    .Join(db.Users, tbc => tbc.Conductor.user_id, u => u.id, (tbc, u) => new { Travel = tbc.Travel, User = u })
+                    .Where(tu => tu.User.id == id).Select(tu => tu.Travel).ToList();
+                    var startsFromDB = db.Starts.Join(db.Buses, s => s.bus_id, b => b.id, (s, b) => new { Start = s, Bus = b })
+                    .Join(db.Conductors, sb => sb.Bus.conductor_id, c => c.id, (sb, c) => new { Start = sb.Start, Conductor = c })
+                    .Join(db.Users, sbc => sbc.Conductor.user_id, u => u.id, (sbc, u) => new { Start = sbc.Start, User = u })
+                    .Where(su => su.User.id == id).Select(su => su.Start).ToList();
+                    var reachesFromDB = db.Reaches.Join(db.Buses, s => s.bus_id, b => b.id, (s, b) => new { Start = s, Bus = b })
+                    .Join(db.Conductors, sb => sb.Bus.conductor_id, c => c.id, (sb, c) => new { Start = sb.Start, Conductor = c })
+                    .Join(db.Users, sbc => sbc.Conductor.user_id, u => u.id, (sbc, u) => new { Start = sbc.Start, User = u })
+                    .Where(su => su.User.id == id).Select(su => su.Start).ToList();
+                    List<ApiTravel> apiTravel = new List<ApiTravel>();
+                    List<ApiStart> apiStart = new List<ApiStart>();
+                    List<ApiReach> apiReaches = new List<ApiReach>();
+                    for (int i = 0; i < travelFromDB.Count; i++)
+                    {
+                        apiTravel.Add(new ApiTravel
+                        {
+                            Id = travelFromDB[i].id,
+                            Date = travelFromDB[i].date.ToString(),
+                            Time = travelFromDB[i].time.ToString(),
+                            Type = travelFromDB[i].type.ToString(),
+                            PassId = Convert.ToInt32(travelFromDB[i].pass_id),
+                            StudentId = Convert.ToInt32(travelFromDB[i].student_id),
+                            BusId = Convert.ToInt32(travelFromDB[i].bus_id),
+                            RouteId = Convert.ToInt32(travelFromDB[i].route_id),
+                            StopId = Convert.ToInt32(travelFromDB[i].stop_id),
+                        });
+                    }
+                    allHistory.travelHistory = apiTravel;
+                    for (int i = 0; i < startsFromDB.Count; i++)
+                    {
+                        apiStart.Add(new ApiStart
+                        {
+                            Id = startsFromDB[i].id,
+                            Date = startsFromDB[i].date.ToString(),
+                            Time = startsFromDB[i].time.ToString(),
+                            BusId = Convert.ToInt32(startsFromDB[i].bus_id),
+                            RouteId = Convert.ToInt32(startsFromDB[i].route_id),
+                        });
+                    }
+                    allHistory.startHistory = apiStart;
+                    for (int i = 0; i < reachesFromDB.Count; i++)
+                    {
+                        apiReaches.Add(new ApiReach
+                        {
+                            Id = reachesFromDB[i].id,
+                            Date = reachesFromDB[i].date.ToString(),
+                            Time = reachesFromDB[i].time.ToString(),
+                            BusId = Convert.ToInt32(reachesFromDB[i].bus_id),
+                            RouteId = Convert.ToInt32(reachesFromDB[i].route_id),
+                            StopId = Convert.ToInt32(reachesFromDB[i].stop_id),
+                        });
+                    }
+                    allHistory.reachHistory = apiReaches;
+                    return Request.CreateResponse(HttpStatusCode.OK, allHistory);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, "Invalid User Id!");
+                }
+            }
+            catch
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+            }
+        }
+        [HttpPut]
+        public HttpResponseMessage MarkNotificationAsRead(int id)
+        {
+            try
+            {
+                var notification = db.Notifications.Find(id);
+                notification.notificationRead = 1;
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.OK, "Notification Marked as Read!");
             }
             catch
             {

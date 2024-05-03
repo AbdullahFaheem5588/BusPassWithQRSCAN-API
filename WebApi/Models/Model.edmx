@@ -56,10 +56,10 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="date" Type="date" />
           <Property Name="time" Type="time" Precision="7" />
-          <Property Name="userrole" Type="varchar" MaxLength="50" />
           <Property Name="type" Type="varchar" MaxLength="100" />
           <Property Name="description" Type="varchar(max)" />
           <Property Name="user_id" Type="int" />
+          <Property Name="notificationRead" Type="int" />
         </EntityType>
         <EntityType Name="Parent">
           <Key>
@@ -679,10 +679,10 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="date" Type="DateTime" Precision="0" />
           <Property Name="time" Type="Time" Precision="7" />
-          <Property Name="userrole" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="type" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="user_id" Type="Int32" />
+          <Property Name="notificationRead" Type="Int32" />
           <NavigationProperty Name="User" Relationship="Self.FK__Notificat__user___47DBAE45" FromRole="Notifications" ToRole="Users" />
         </EntityType>
         <EntityType Name="Parent">
@@ -1333,10 +1333,10 @@
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="date" ColumnName="date" />
                 <ScalarProperty Name="time" ColumnName="time" />
-                <ScalarProperty Name="userrole" ColumnName="userrole" />
                 <ScalarProperty Name="type" ColumnName="type" />
                 <ScalarProperty Name="description" ColumnName="description" />
                 <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="notificationRead" ColumnName="notificationRead" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

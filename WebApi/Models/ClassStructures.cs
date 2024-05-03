@@ -84,9 +84,9 @@ namespace WebApi.Models
         public string Date { get; set; }
         public string Time { get; set; }
         public string Type { get; set; }
-        public string UserRole { get; set; }
         public string Description { get; set; }
         public int UserID { get; set; }
+        public int NotificationRead { get; set; }
     }
     public class ApiFavStops
     {
@@ -106,5 +106,40 @@ namespace WebApi.Models
         public string Latitude { get; set; }
         public int Route { get; set; }
 
+    }
+    public class AllHistory
+    {
+        public List<ApiTravel> travelHistory { get; set; }
+        public List<ApiStart> startHistory { get; set; }
+        public List<ApiReach> reachHistory { get; set; }
+    }
+    public class ApiTravel
+    {
+        public int Id { get; set; }
+        public string Date { get; set; }
+        public string Time { get; set; }
+        public string Type { get; set; }
+        public int PassId { get; set; }
+        public int StudentId { get; set; }
+        public int BusId { get; set; }
+        public int RouteId { get; set; }
+        public int StopId { get; set; }
+    }
+    public class ApiStart
+    {
+        public int Id { get; set; }
+        public String Date { get; set; }
+        public String Time { get; set; }
+        public int BusId { get; set; }
+        public int RouteId { get; set; }
+    }
+    public class ApiReach
+    {
+        public int Id { get; set; }
+        public String Date { get; set; }
+        public String Time { get; set; }
+        public int BusId { get; set; }
+        public int RouteId { get; set; }
+        public int StopId { get; set; }
     }
 }

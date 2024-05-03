@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="836c7a99949d4d119fe922bfbc3eb85e" Name="Diagram1">
+      <Diagram DiagramId="0fa350ea27e840efb764c81e9935b6bf" Name="Diagram1">
         <EntityTypeShape EntityType="BusPassWithQRScanModel.Admin" Width="1.5" PointX="3.75" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="BusPassWithQRScanModel.Bus" Width="1.5" PointX="3.75" PointY="4.625" IsExpanded="true" />
         <EntityTypeShape EntityType="BusPassWithQRScanModel.Conductor" Width="1.5" PointX="1.5" PointY="5" IsExpanded="true" />
