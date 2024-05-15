@@ -14,6 +14,7 @@ namespace WebApi.Models
         public ApiConductor Conductors { get; set; }
         public ApiParent Parents { get; set; }
         public ApiStudent Students { get; set; }
+        public string userRole { get; set; }
     }
 
     public class ApiAdmin
@@ -75,8 +76,13 @@ namespace WebApi.Models
 
     public class Location
     {
-        public string Latitude { get; set; }
-        public string Longitude { get; set; }
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+    }
+    public class BusLocation
+    {
+        public int BusId { get; set;}
+        public Location Cords { get; set; }
     }
     public class ApiNotification
     {
@@ -141,5 +147,11 @@ namespace WebApi.Models
         public int BusId { get; set; }
         public int RouteId { get; set; }
         public int StopId { get; set; }
+    }
+    public class ApiChangePassword
+    {
+        public int id { get; set; }
+        public string oldPassword { get; set; }
+        public string newPassword { get; set; }
     }
 }

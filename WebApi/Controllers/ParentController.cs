@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Xml;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -18,7 +19,7 @@ namespace WebApi.Controllers
             {
                 var childrenFromDB = (from s in db.Students
                                       join p in db.Passes on s.pass_id equals p.id
-                                      where s.parent_id == 1
+                                      where s.parent_id == id
                                       select new { Student = s, Pass = p }).ToList();
                 List<ApiStudent> apiStudent = new List<ApiStudent>();
                 for(int i = 0; i < childrenFromDB.Count; i++)
@@ -104,8 +105,8 @@ namespace WebApi.Controllers
                         {
                             location.Add(new Location
                             {
-                                Latitude = locationsFromDB[i].latitude,
-                                Longitude = locationsFromDB[i].longitude,
+                                latitude = Convert.ToDouble(locationsFromDB[i].latitude),
+                                longitude = Convert.ToDouble(locationsFromDB[i].longitude),
                             });
                         }
                     }
@@ -118,8 +119,8 @@ namespace WebApi.Controllers
                             if (locationsFromDB[i].time >= history[0].time && locationsFromDB[i].time <= history[1].time)
                                 location.Add(new Location
                                 {
-                                    Latitude = locationsFromDB[i].latitude,
-                                    Longitude = locationsFromDB[i].longitude,
+                                    latitude = Convert.ToDouble(locationsFromDB[i].latitude),
+                                    longitude = Convert.ToDouble(locationsFromDB[i].longitude),
                                 });
                         }
                     }
@@ -133,8 +134,8 @@ namespace WebApi.Controllers
                             if ((locationsFromDB[i].time >= history[0].time && locationsFromDB[i].time <= history[1].time) || (locationsFromDB[i].time >= history[2].time))
                                 location.Add(new Location
                                 {
-                                    Latitude = locationsFromDB[i].latitude,
-                                    Longitude = locationsFromDB[i].longitude,
+                                    latitude = Convert.ToDouble(locationsFromDB[i].latitude),
+                                    longitude = Convert.ToDouble(locationsFromDB[i].longitude),
                                 });
                         }
                     }
@@ -148,8 +149,8 @@ namespace WebApi.Controllers
                             if ((locationsFromDB[i].time >= history[0].time && locationsFromDB[i].time <= history[1].time) || (locationsFromDB[i].time >= history[2].time && locationsFromDB[i].time <= history[3].time))
                             location.Add(new Location
                             {
-                                Latitude = locationsFromDB[i].latitude,
-                                Longitude = locationsFromDB[i].longitude,
+                                latitude = Convert.ToDouble(locationsFromDB[i].latitude),
+                                longitude = Convert.ToDouble(locationsFromDB[i].longitude),
                             });
                         }
                     }

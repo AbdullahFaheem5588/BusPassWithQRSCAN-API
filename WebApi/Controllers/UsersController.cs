@@ -320,14 +320,14 @@ namespace WebApi.Controllers
             }
         }
         [HttpPut]
-        public HttpResponseMessage ChangePassword(int id, String oldPassword, String newPassword)
+        public HttpResponseMessage ChangePassword(ApiChangePassword data)
         {
-            User user = db.Users.Find(id);
+            User user = db.Users.Find(data.id);
             if (user != null)
             {
-                if (user.password == oldPassword)
+                if (user.password == data.oldPassword)
                 {
-                    user.password = newPassword;
+                    user.password = data.newPassword;
                     db.SaveChanges();
                     return Request.CreateResponse(HttpStatusCode.OK, "Password Changed Successfully");
                 }
@@ -387,6 +387,7 @@ namespace WebApi.Controllers
             {
                 if (user.password == password)
                 {
+                    singleUser.userRole = user.role;
                     if (user.role == "Admin")
                     {
                         var adminDetails = db.Admins.FirstOrDefault(a => a.user_id == user.id);
@@ -472,7 +473,7 @@ namespace WebApi.Controllers
         {   
             try
             {
-                List<Notification> notifications = db.Notifications.Where(n => n.user_id == id).ToList();
+                List<Notification> notifications = db.Notifications.Where(n => n.user_id == id).OrderByDescending(n => n.id).ToList();
                 List<ApiNotification> apiNotifications = new List<ApiNotification>();
                 if (notifications.Count > 0)
                 {
@@ -545,18 +546,19 @@ namespace WebApi.Controllers
             }
         }
         [HttpGet]
-        public HttpResponseMessage GetUserHistory(int id)
+        public HttpResponseMessage GetUserHistory(int id, string fDate, string tDate)
         {
+            DateTime fromDate = Convert.ToDateTime(fDate);
+            DateTime toDate = Convert.ToDateTime(tDate);
             try
             {
                 string userRole = db.Users.FirstOrDefault(u => u.id == id)?.role;
                 if (userRole == "Student")
                 {
-                    var travelFromDB = db.Travels
-                        .Join(db.Students, t => t.student_id, s => s.id, (t, s) => new { Travel = t, Student = s })
-                        .Join(db.Users, ts => ts.Student.user_id, u => u.id, (ts, u) => new { Travel = ts.Travel, User = u })
-                        .Where(ut => ut.User.id == id)
-                        .Select(ut => ut.Travel).ToList();
+                    var travelFromDB = db.Travels.Join(db.Students, t => t.student_id, s => s.id, (t, s) => new { Travel = t, Student = s })
+                    .Join(db.Users, ts => ts.Student.user_id, u => u.id, (ts, u) => new { Travel = ts.Travel, User = u })
+                    .Where(ut => ut.User.id == id && ut.Travel.date >= fromDate && ut.Travel.date <= toDate)
+                    .Select(ut => ut.Travel).ToList();
                     List<ApiTravel> apiTravel = new List<ApiTravel>();
                     for (int i = 0; i < travelFromDB.Count; i++)
                     {
@@ -586,9 +588,9 @@ namespace WebApi.Controllers
                         var childId = Convert.ToInt32(childIdsFromDB[i]);
                         List<ApiTravel> singleChildTravel = new List<ApiTravel>();
                         var travelFromDB = db.Travels
-                        .Join(db.Students, t => t.student_id, s => s.id, (t, s) => new { Travel = t, Student = s })
-                        .Where(ut => ut.Student.id == childId)
-                        .Select(ut => ut.Travel).ToList();
+                            .Join(db.Students, t => t.student_id, s => s.id, (t, s) => new { Travel = t, Student = s })
+                            .Where(ut => ut.Student.id == childId && ut.Travel.date >= fromDate && ut.Travel.date <= toDate)
+                            .Select(ut => ut.Travel).ToList();
                         for (int j = 0; j < travelFromDB.Count; j++)
                         {
                             singleChildTravel.Add(new ApiTravel
@@ -614,15 +616,24 @@ namespace WebApi.Controllers
                     var travelFromDB = db.Travels.Join(db.Buses, t => t.bus_id, b => b.id, (t, b) => new { Travel = t, Bus = b })
                     .Join(db.Conductors, tb => tb.Bus.conductor_id, c => c.id, (tb, c) => new { Travel = tb.Travel, Conductor = c })
                     .Join(db.Users, tbc => tbc.Conductor.user_id, u => u.id, (tbc, u) => new { Travel = tbc.Travel, User = u })
-                    .Where(tu => tu.User.id == id).Select(tu => tu.Travel).ToList();
-                    var startsFromDB = db.Starts.Join(db.Buses, s => s.bus_id, b => b.id, (s, b) => new { Start = s, Bus = b })
-                    .Join(db.Conductors, sb => sb.Bus.conductor_id, c => c.id, (sb, c) => new { Start = sb.Start, Conductor = c })
-                    .Join(db.Users, sbc => sbc.Conductor.user_id, u => u.id, (sbc, u) => new { Start = sbc.Start, User = u })
-                    .Where(su => su.User.id == id).Select(su => su.Start).ToList();
-                    var reachesFromDB = db.Reaches.Join(db.Buses, s => s.bus_id, b => b.id, (s, b) => new { Start = s, Bus = b })
-                    .Join(db.Conductors, sb => sb.Bus.conductor_id, c => c.id, (sb, c) => new { Start = sb.Start, Conductor = c })
-                    .Join(db.Users, sbc => sbc.Conductor.user_id, u => u.id, (sbc, u) => new { Start = sbc.Start, User = u })
-                    .Where(su => su.User.id == id).Select(su => su.Start).ToList();
+                    .Where(tu => tu.User.id == id && tu.Travel.date >= fromDate && tu.Travel.date <= toDate)
+                    .Select(tu => tu.Travel).ToList();
+
+                    var startsFromDB = db.Starts
+                        .Join(db.Buses, s => s.bus_id, b => b.id, (s, b) => new { Start = s, Bus = b })
+                        .Join(db.Conductors, sb => sb.Bus.conductor_id, c => c.id, (sb, c) => new { Start = sb.Start, Conductor = c })
+                        .Join(db.Users, sbc => sbc.Conductor.user_id, u => u.id, (sbc, u) => new { Start = sbc.Start, User = u })
+                        .Where(su => su.User.id == id && su.Start.date >= fromDate && su.Start.date <= toDate)
+                        .Select(su => su.Start)
+                        .ToList();
+
+                    var reachesFromDB = db.Reaches
+                        .Join(db.Buses, s => s.bus_id, b => b.id, (s, b) => new { Start = s, Bus = b })
+                        .Join(db.Conductors, sb => sb.Bus.conductor_id, c => c.id, (sb, c) => new { Start = sb.Start, Conductor = c })
+                        .Join(db.Users, sbc => sbc.Conductor.user_id, u => u.id, (sbc, u) => new { Start = sbc.Start, User = u })
+                        .Where(su => su.User.id == id && su.Start.date >= fromDate && su.Start.date <= toDate)
+                        .Select(su => su.Start)
+                        .ToList();
                     List<ApiTravel> apiTravel = new List<ApiTravel>();
                     List<ApiStart> apiStart = new List<ApiStart>();
                     List<ApiReach> apiReaches = new List<ApiReach>();
@@ -672,9 +683,9 @@ namespace WebApi.Controllers
                 else if (userRole == "Admin")
                 {
                     AllHistory allHistory = new AllHistory();
-                    var travelFromDB = db.Travels.ToList();
-                    var startsFromDB = db.Starts.ToList();
-                    var reachesFromDB = db.Reaches.ToList();
+                    var travelFromDB = db.Travels .Where(t => t.date >= fromDate && t.date <= toDate).ToList();
+                    var startsFromDB = db.Starts.Where(s => s.date >= fromDate && s.date <= toDate).ToList();
+                    var reachesFromDB = db.Reaches.Where(r => r.date >= fromDate && r.date <= toDate).ToList();
                     List<ApiTravel> apiTravel = new List<ApiTravel>();
                     List<ApiStart> apiStart = new List<ApiStart>();
                     List<ApiReach> apiReaches = new List<ApiReach>();
@@ -740,6 +751,24 @@ namespace WebApi.Controllers
                 notification.notificationRead = 1;
                 db.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK, "Notification Marked as Read!");
+            }
+            catch
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+            }
+        }
+        [HttpPut]
+        public HttpResponseMessage MarkAllNotificationAsRead(int userId)
+        {
+            try
+            {
+                var notifications = db.Notifications.Where(n => n.user_id == userId).ToList();
+                for(int i= 0; i < notifications.Count; i++)
+                {
+                    notifications[i].notificationRead = 1;
+                }
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.OK, "Notifications Marked as Read!");
             }
             catch
             {

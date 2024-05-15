@@ -89,4 +89,10 @@ Select * from Users
 
 Select s.*,p.* from Student s, Pass p where s.pass_id = p.id and parent_id = 1
 
-Update Travels set date = GETDATE()
+Update Travels set time = '' where id = 3
+
+update Notifications set notificationRead = 0
+
+update Travels set date = '2024-04-05'
+
+Select t.* from Travels t inner join Student s on t.student_id = s.id where s.parent_id = 1
