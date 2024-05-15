@@ -593,6 +593,7 @@ namespace WebApi.Controllers
                             .Select(ut => ut.Travel).ToList();
                         for (int j = 0; j < travelFromDB.Count; j++)
                         {
+                            int studentId = Convert.ToInt32(travelFromDB[j].student_id);
                             singleChildTravel.Add(new ApiTravel
                             {
                                 Id = travelFromDB[j].id,
@@ -600,10 +601,11 @@ namespace WebApi.Controllers
                                 Time = travelFromDB[j].time.ToString(),
                                 Type = travelFromDB[j].type.ToString(),
                                 PassId = Convert.ToInt32(travelFromDB[j].pass_id),
-                                StudentId = Convert.ToInt32(travelFromDB[j].student_id),
+                                StudentId = studentId,
                                 BusId = Convert.ToInt32(travelFromDB[j].bus_id),
                                 RouteId = Convert.ToInt32(travelFromDB[j].route_id),
                                 StopId = Convert.ToInt32(travelFromDB[j].stop_id),
+                                StudentName = db.Students.Where(s => s.id == studentId).Select(s => s.name).FirstOrDefault()
                             });
                         }
                         apiTravel.Add(singleChildTravel);

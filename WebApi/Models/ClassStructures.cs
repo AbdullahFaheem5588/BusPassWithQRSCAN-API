@@ -130,6 +130,7 @@ namespace WebApi.Models
         public int BusId { get; set; }
         public int RouteId { get; set; }
         public int StopId { get; set; }
+        public string StudentName { get; set; }
     }
     public class ApiStart
     {
@@ -153,5 +154,15 @@ namespace WebApi.Models
         public int id { get; set; }
         public string oldPassword { get; set; }
         public string newPassword { get; set; }
+    }
+    public class ChildrenWithTimings
+    {
+        public ApiStudent childDetails { get; set; }
+        public ChildTimings childTimings { get; set; }
+    }
+    public class ChildrenLocation
+    {
+        public string Name { get; set; }
+        public List<Location> Location { get; set; }
     }
 }

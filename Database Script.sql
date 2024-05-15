@@ -87,12 +87,7 @@ Select * from TracksLocation
 Select * from Travels
 Select * from Users
 
-Select s.*,p.* from Student s, Pass p where s.pass_id = p.id and parent_id = 1
 
-Update Travels set time = '' where id = 3
+Select * from Notifications
 
-update Notifications set notificationRead = 0
-
-update Travels set date = '2024-04-05'
-
-Select t.* from Travels t inner join Student s on t.student_id = s.id where s.parent_id = 1
+update Notifications set user_id = 1
