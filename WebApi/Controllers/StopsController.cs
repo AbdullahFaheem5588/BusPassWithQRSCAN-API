@@ -35,7 +35,7 @@ namespace WebApi.Controllers
                         apiStop.Name = stops.FirstOrDefault(s => s.id == apiStop.Id)?.name;
                         apiStop.Timing = stopsInRoute[j].StopTiming.ToString();
                         apiStop.Latitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.latitude;
-                        apiStop.Logitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.longitude;
+                        apiStop.Longitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.longitude;
                         apiStop.Route = route[i].id;
                         apiStops.Add(apiStop);
                     }

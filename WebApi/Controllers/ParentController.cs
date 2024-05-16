@@ -53,11 +53,11 @@ namespace WebApi.Controllers
                         }
                         else if (history[j].type == "dropoff_checkin")
                         {
-                            childTimings.Dropup_Checkin = history[j].time.ToString();
+                            childTimings.Dropoff_Checkin = history[j].time.ToString();
                         }
                         else
                         {
-                            childTimings.Dropup_Checkout = history[j].time.ToString();
+                            childTimings.Dropoff_Checkout = history[j].time.ToString();
                         }
                     }
                     childrenWithTimings.Add(new ChildrenWithTimings

@@ -4,10 +4,6 @@ using System.Collections.Generic;
 
 namespace WebApi.Models
 {
-    public class ClassStructures
-    {
-        public List<SingleUser> Users { get; set; }
-    }
     public class SingleUser
     {
         public ApiAdmin Admins { get; set; }
@@ -70,8 +66,8 @@ namespace WebApi.Models
     {
         public string Pickup_Checkin { get; set; }
         public string Pickup_Checkout { get; set; }
-        public string Dropup_Checkin { get; set; }
-        public string Dropup_Checkout { get; set; }
+        public string Dropoff_Checkin { get; set; }
+        public string Dropoff_Checkout { get; set; }
     }
 
     public class Location
@@ -108,7 +104,7 @@ namespace WebApi.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Timing { get; set; }
-        public string Logitude { get; set; }
+        public string Longitude { get; set; }
         public string Latitude { get; set; }
         public int Route { get; set; }
 

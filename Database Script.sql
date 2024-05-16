@@ -69,25 +69,80 @@ route_id int,foreign key(route_id) references Route(id),stop_id int,foreign k
 )
 -------------------------------------------------------------------------------------------------------
 
+Select * from Users
+Select * from Student
 Select * from Admin
-Select * from Bus
 Select * from Conductor
-Select * from FavouriteStops
-Select * from IsAssigned
-Select * from Notifications
 Select * from Parent
+Select * from Notifications
 Select * from Pass
+Select * from FavouriteStops
+Select * from Bus
+Select * from IsAssigned
 Select * from Reaches
 Select * from Route
 Select * from RouteStop
 Select * from Starts
 Select * from Stops
-Select * from Student
-Select * from TracksLocation
 Select * from Travels
-Select * from Users
+Select * from TracksLocation
+
+Insert into Travels Values(GETDATE(), '07:46:00','pickup_checkin', 5,5,2,2,5)
+
+Select TOP(1) st.* from Bus b, Starts s, Reaches r, RouteStop rs, Stops st where b.id = s.bus_id and s.date = GETDATE() and r.stop_id != rs.stop_id and r.route_id = rs.route_id order by s.id desc
+
+Update Reaches set stop_id = 2 where id = 4
+
+update RouteStop set stop_id = 2 where id = 3
+
+--DECLARE @conductorId INT = 1;
+
+--WITH CTE_BusId AS (
+--    SELECT b.id
+--    FROM Conductor c
+--    INNER JOIN Bus b ON c.id = b.conductor_id
+--    WHERE c.id = @conductorId
+--),
+--CTE_RouteId AS (
+--    SELECT TOP 1 route_id
+--    FROM Starts
+--    WHERE bus_id = (SELECT id FROM CTE_BusId)
+--    AND date = CAST(GETDATE() AS DATE)
+--    ORDER BY time DESC
+--),
+--CTE_LastReachedStopId AS (
+--    SELECT TOP 1 stop_id
+--    FROM Reaches
+--    WHERE route_id = (SELECT route_id FROM CTE_RouteId)
+--    AND date = CAST(GETDATE() AS DATE)
+--    ORDER BY id DESC
+--),
+--CTE_NextStopId AS (
+--    SELECT s.id, s.name, s.latitude, s.longitude, rs.stoptiming
+--    FROM Stops s
+--    INNER JOIN RouteStop rs ON s.id = rs.stop_id
+--    INNER JOIN (
+--        SELECT rs.route_id, rs.stop_id, ROW_NUMBER() OVER (PARTITION BY rs.route_id ORDER BY rs.id) AS RowNum
+--        FROM RouteStop rs
+--        WHERE rs.route_id = (SELECT route_id FROM CTE_RouteId)
+--        AND rs.stop_id > (SELECT stop_id FROM CTE_LastReachedStopId)
+--    ) t ON rs.route_id = t.route_id AND rs.stop_id = t.stop_id
+--    WHERE t.RowNum = 1
+--)
+--SELECT * FROM CTE_NextStopId, (SELECT route_id FROM CTE_RouteId) AS RouteId;
 
 
-Select * from Notifications
 
-update Notifications set user_id = 1
+
+
+
+
+
+
+
+
+
+
+Update TracksLocation set date = GETDATE()
+
+update Reaches set stop_id = 3 where id = 4
