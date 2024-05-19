@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.UI.WebControls.WebParts;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -78,7 +78,8 @@ namespace WebApi.Controllers
             try
             {
                 var existingStudent = db.Users.FirstOrDefault(u => u.username == student.UserName);
-                if (existingStudent == null) {
+                if (existingStudent == null)
+                {
                     User newUser = new User
                     {
                         username = student.UserName,
@@ -381,6 +382,18 @@ namespace WebApi.Controllers
         [HttpGet]
         public HttpResponseMessage Login(string username, string password)
         {
+            Task.Run(() =>
+            {
+                DateTime currentDate = DateTime.Today;
+                var passesToUpdate = db.Passes.Where(p => p.passexpiry < currentDate || p.remainingjourneys == 0).ToList();
+
+                foreach (var pass in passesToUpdate)
+                {
+                    pass.status = "In-Active";
+                }
+
+                db.SaveChanges();
+            });
             SingleUser singleUser = new SingleUser();
             User user = db.Users.FirstOrDefault(u => u.username == username);
             if (user != null)
@@ -421,6 +434,7 @@ namespace WebApi.Controllers
                     else if (user.role == "Conductor")
                     {
                         var conductorDetails = db.Conductors.FirstOrDefault(c => c.user_id == user.id);
+                        var busDetails = db.Buses.FirstOrDefault(b => b.conductor_id == conductorDetails.id);
                         ApiConductor conductor = new ApiConductor
                         {
                             Name = conductorDetails.name,
@@ -429,6 +443,8 @@ namespace WebApi.Controllers
                             UserId = user.id,
                             UserName = user.username,
                             Password = user.password,
+                            BusId = busDetails.id,
+                            BusRegNo = busDetails.regno,
                         };
                         singleUser.Conductors = conductor;
                     }
@@ -470,7 +486,7 @@ namespace WebApi.Controllers
         }
         [HttpGet]
         public HttpResponseMessage GetUserNotification(int id)
-        {   
+        {
             try
             {
                 List<Notification> notifications = db.Notifications.Where(n => n.user_id == id).OrderByDescending(n => n.id).ToList();
@@ -538,7 +554,7 @@ namespace WebApi.Controllers
                     db.Notifications.Add(notification);
                     db.SaveChanges();
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, "All Users Notified");
+                return Request.CreateResponse(HttpStatusCode.OK, "Announcement Made Succesfully");
             }
             catch
             {
@@ -685,7 +701,7 @@ namespace WebApi.Controllers
                 else if (userRole == "Admin")
                 {
                     AllHistory allHistory = new AllHistory();
-                    var travelFromDB = db.Travels .Where(t => t.date >= fromDate && t.date <= toDate).ToList();
+                    var travelFromDB = db.Travels.Where(t => t.date >= fromDate && t.date <= toDate).ToList();
                     var startsFromDB = db.Starts.Where(s => s.date >= fromDate && s.date <= toDate).ToList();
                     var reachesFromDB = db.Reaches.Where(r => r.date >= fromDate && r.date <= toDate).ToList();
                     List<ApiTravel> apiTravel = new List<ApiTravel>();
@@ -765,7 +781,7 @@ namespace WebApi.Controllers
             try
             {
                 var notifications = db.Notifications.Where(n => n.user_id == userId).ToList();
-                for(int i= 0; i < notifications.Count; i++)
+                for (int i = 0; i < notifications.Count; i++)
                 {
                     notifications[i].notificationRead = 1;
                 }

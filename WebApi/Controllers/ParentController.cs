@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Xml;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -22,7 +21,7 @@ namespace WebApi.Controllers
                                       where s.parent_id == id
                                       select new { Student = s, Pass = p }).ToList();
                 List<ChildrenWithTimings> childrenWithTimings = new List<ChildrenWithTimings>();
-                for(int i = 0; i < childrenFromDB.Count; i++)
+                for (int i = 0; i < childrenFromDB.Count; i++)
                 {
                     ApiStudent apiStudent = new ApiStudent
                     {
@@ -81,12 +80,12 @@ namespace WebApi.Controllers
             {
                 List<int> childrenIds = db.Students.Where(p => p.parent_id == id).Select(s => s.id).ToList();
                 List<ChildrenLocation> childrenLocation = new List<ChildrenLocation>();
-                for(int j=0; j<childrenIds.Count; j++)
+                for (int j = 0; j < childrenIds.Count; j++)
                 {
                     int studentId = Convert.ToInt32(childrenIds[j]);
                     List<Travel> history = db.Travels.Where(h => h.student_id == studentId && h.date == DateTime.Today).ToList();
                     List<Location> location = new List<Location>();
-                    if(history.Count > 0)
+                    if (history.Count > 0)
                     {
                         if (history.Last().type == "pickup_checkin")
                         {
@@ -152,7 +151,7 @@ namespace WebApi.Controllers
                         });
                     }
                 }
-                if(childrenLocation.Count > 0)
+                if (childrenLocation.Count > 0)
                     return Request.CreateResponse(HttpStatusCode.OK, childrenLocation);
                 else
                     return Request.CreateResponse(HttpStatusCode.NoContent, "No Data Found");

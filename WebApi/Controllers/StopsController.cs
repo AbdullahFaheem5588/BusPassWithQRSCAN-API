@@ -20,7 +20,7 @@ namespace WebApi.Controllers
                 var routeStop = db.RouteStops.ToList();
                 var route = db.Routes.ToList();
                 List<List<ApiStops>> apiRoute = new List<List<ApiStops>>();
-                for(int i=0; i<route.Count; i++)
+                for (int i = 0; i < route.Count; i++)
                 {
                     List<ApiStops> apiStops = new List<ApiStops>();
                     var stopsInRoute = routeStop.Where(rs => rs.route_id == route[i].id).Select(rs => new
@@ -28,7 +28,7 @@ namespace WebApi.Controllers
                         StopId = rs.stop_id,
                         StopTiming = rs.stoptiming,
                     }).ToList();
-                    for(int j=0; j<stopsInRoute.Count; j++)
+                    for (int j = 0; j < stopsInRoute.Count; j++)
                     {
                         ApiStops apiStop = new ApiStops();
                         apiStop.Id = Convert.ToInt32(stopsInRoute[j].StopId);

@@ -1,5 +1,4 @@
-﻿using Microsoft.Ajax.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace WebApi.Models
@@ -32,6 +31,8 @@ namespace WebApi.Models
         public int UserId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
+        public int BusId { get; set; }
+        public string BusRegNo { get; set; }
     }
 
     public class ApiParent
@@ -77,7 +78,8 @@ namespace WebApi.Models
     }
     public class BusLocation
     {
-        public int BusId { get; set;}
+        public int BusId { get; set; }
+        public int RouteId { get; set; }
         public Location Cords { get; set; }
     }
     public class ApiNotification
@@ -160,5 +162,21 @@ namespace WebApi.Models
     {
         public string Name { get; set; }
         public List<Location> Location { get; set; }
+    }
+    public class SeatsAvailibility
+    {
+        public int TotalSeats { get; set; }
+        public int StudentsCheckedIn { get; set; }
+    }
+    public class JourneyStopsChecker
+    {
+        public int TotalStops { get; set; }
+        public int RemainingStops { get; set; }
+    }
+    public class Routes
+    {
+        public int RouteId { get; set; }
+        public string RouteTitle { get; set; }
+        public List<ApiStops> Stops { get; set; }
     }
 }
