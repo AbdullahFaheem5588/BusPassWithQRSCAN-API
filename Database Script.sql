@@ -95,6 +95,12 @@ Update Reaches set stop_id = 4 where id = 4
 
 update RouteStop set stop_id = 2 where id = 3
 
-Update TracksLocation set date = GETDATE()
+Update Starts set date = GETDATE()
 
-Insert into Reaches Values('2024-05-18', '23:04:00', 2, 2, null)
+
+Insert into Notifications Values('2024-05-20','08:00:00.0000000','Check In!','Checked into Bus',1,0)
+Select * from Notifications
+
+Update Notifications set description = 'Hammad Checked into Bus' where description = 'Hamid Checked into Bus'
+
+

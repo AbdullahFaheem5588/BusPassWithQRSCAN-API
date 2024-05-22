@@ -203,6 +203,7 @@ namespace WebApi.Controllers
                     route_id = routeId,
                 };
                 db.Starts.Add(startJourney);
+                ReachedAtStop(busId, routeId, 0);
                 db.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK, "Journey Started Succesfully");
             }

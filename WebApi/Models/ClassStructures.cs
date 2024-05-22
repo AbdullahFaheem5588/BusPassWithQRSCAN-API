@@ -11,7 +11,6 @@ namespace WebApi.Models
         public ApiStudent Students { get; set; }
         public string userRole { get; set; }
     }
-
     public class ApiAdmin
     {
         public int Id { get; set; }
@@ -22,7 +21,6 @@ namespace WebApi.Models
         public string UserName { get; set; }
         public string Password { get; set; }
     }
-
     public class ApiConductor
     {
         public int Id { get; set; }
@@ -34,7 +32,6 @@ namespace WebApi.Models
         public int BusId { get; set; }
         public string BusRegNo { get; set; }
     }
-
     public class ApiParent
     {
         public int Id { get; set; }
@@ -45,7 +42,6 @@ namespace WebApi.Models
         public string UserName { get; set; }
         public string Password { get; set; }
     }
-
     public class ApiStudent
     {
         public int Id { get; set; }
@@ -70,7 +66,6 @@ namespace WebApi.Models
         public string Dropoff_Checkin { get; set; }
         public string Dropoff_Checkout { get; set; }
     }
-
     public class Location
     {
         public double latitude { get; set; }

@@ -77,6 +77,9 @@ namespace WebApi.Controllers
         {
             try
             {
+                var nextId = ((int)(db.Database.SqlQuery<decimal>("SELECT IDENT_CURRENT('Users')").Single())) + 1;
+                var temp = student.Name.Split(' ');
+                student.UserName = temp[0].ToLower() + "." + nextId + "@BPQS.com";
                 var existingStudent = db.Users.FirstOrDefault(u => u.username == student.UserName);
                 if (existingStudent == null)
                 {
@@ -130,6 +133,9 @@ namespace WebApi.Controllers
         {
             try
             {
+                var nextId = ((int)(db.Database.SqlQuery<decimal>("SELECT IDENT_CURRENT('Users')").Single())) + 1;
+                var temp = admin.Name.Split(' ');
+                admin.UserName = temp[0].ToLower() + "." + nextId + "@BPQS.com";
                 var existingAdmin = db.Users.FirstOrDefault(u => u.username == admin.UserName);
                 if (existingAdmin == null)
                 {
@@ -168,6 +174,9 @@ namespace WebApi.Controllers
         {
             try
             {
+                var nextId = ((int)(db.Database.SqlQuery<decimal>("SELECT IDENT_CURRENT('Users')").Single())) + 1;
+                var temp = parent.Name.Split(' ');
+                parent.UserName = temp[0].ToLower() + "." + nextId + "@BPQS.com";
                 var existingParent = db.Users.FirstOrDefault(u => u.username == parent.UserName);
                 if (existingParent == null)
                 {
@@ -206,6 +215,9 @@ namespace WebApi.Controllers
         {
             try
             {
+                var nextId = ((int)(db.Database.SqlQuery<decimal>("SELECT IDENT_CURRENT('Users')").Single())) + 1;
+                var temp = conductor.Name.Split(' ');
+                conductor.UserName = temp[0].ToLower() + "." + nextId + "@BPQS.com";
                 var existingConductor = db.Users.FirstOrDefault(u => u.username == conductor.UserName);
                 if (existingConductor == null)
                 {
