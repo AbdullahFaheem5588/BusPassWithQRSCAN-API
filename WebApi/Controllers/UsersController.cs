@@ -457,6 +457,7 @@ namespace WebApi.Controllers
                             Password = user.password,
                             BusId = busDetails.id,
                             BusRegNo = busDetails.regno,
+                            TotalSeats = Convert.ToInt32(busDetails.totalSeats),
                         };
                         singleUser.Conductors = conductor;
                     }
@@ -560,9 +561,10 @@ namespace WebApi.Controllers
                     Notification notification = new Notification();
                     notification.date = DateTime.Today;
                     notification.time = DateTime.Now.TimeOfDay;
-                    notification.type = "Announcement";
+                    notification.type = "Announcement!";
                     notification.description = Description;
                     notification.user_id = user[i].id;
+                    notification.notificationRead = 0;
                     db.Notifications.Add(notification);
                     db.SaveChanges();
                 }

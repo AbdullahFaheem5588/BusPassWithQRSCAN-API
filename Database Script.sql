@@ -91,16 +91,17 @@ Select * from TracksLocation
 
 Insert into Travels Values(GETDATE(), '07:46:00','pickup_checkin', 5,5,2,2,5)
 
-Update Reaches set stop_id = 4 where id = 4
+Update Reaches set stop_id = 2 where id = 12
 
-update RouteStop set stop_id = 2 where id = 3
+update RouteStop set stop_id = 2 where id = 12
 
 Update Starts set date = GETDATE()
 
 
 Insert into Notifications Values('2024-05-20','08:00:00.0000000','Check In!','Checked into Bus',1,0)
-Select * from Notifications
 
-Update Notifications set description = 'Hammad Checked into Bus' where description = 'Hamid Checked into Bus'
+SELECT COUNT(*) FROM Reaches WHERE date = '2024-05-25' AND bus_id = 1 AND time >= '04:30:31' AND stop_id IS NULL AND route_id = 1;
 
+Select Top(1) s.route_id from Starts s inner join Bus b on b.id = s.bus_id where s.date = '2024-05-25' AND b.conductor_id = 1 order by s.time desc
 
+delete from Reaches where id = 23

@@ -31,6 +31,7 @@ namespace WebApi.Models
         public string Password { get; set; }
         public int BusId { get; set; }
         public string BusRegNo { get; set; }
+        public int TotalSeats { get; set; }
     }
     public class ApiParent
     {
@@ -74,7 +75,6 @@ namespace WebApi.Models
     public class BusLocation
     {
         public int BusId { get; set; }
-        public int RouteId { get; set; }
         public Location Cords { get; set; }
     }
     public class ApiNotification
@@ -157,11 +157,6 @@ namespace WebApi.Models
     {
         public string Name { get; set; }
         public List<Location> Location { get; set; }
-    }
-    public class SeatsAvailibility
-    {
-        public int TotalSeats { get; set; }
-        public int StudentsCheckedIn { get; set; }
     }
     public class JourneyStopsChecker
     {
