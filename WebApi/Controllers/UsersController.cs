@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
 using WebApi.Models;
 
@@ -391,21 +390,23 @@ namespace WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, "No Such User!");
             }
         }
-        [HttpGet]
-        public HttpResponseMessage Login(string username, string password)
+        public void updatePassStatus()
         {
-            Task.Run(() =>
+            DateTime currentDate = DateTime.Today;
+            var passesToUpdate = db.Passes.Where(p => p.passexpiry < currentDate || p.remainingjourneys <= 0).ToList();
+            if (passesToUpdate.Count > 0)
             {
-                DateTime currentDate = DateTime.Today;
-                var passesToUpdate = db.Passes.Where(p => p.passexpiry < currentDate || p.remainingjourneys == 0).ToList();
-
                 foreach (var pass in passesToUpdate)
                 {
                     pass.status = "In-Active";
+                    db.SaveChanges();
                 }
-
-                db.SaveChanges();
-            });
+            }
+        }
+        [HttpGet]
+        public HttpResponseMessage Login(string username, string password)
+        {
+            updatePassStatus();
             SingleUser singleUser = new SingleUser();
             User user = db.Users.FirstOrDefault(u => u.username == username);
             if (user != null)
@@ -529,20 +530,24 @@ namespace WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error");
             }
         }
+        public void LocalNotifyUser(int userId, string Type, string Description)
+        {
+            Notification notification = new Notification();
+            notification.date = DateTime.Today;
+            notification.time = DateTime.Now.TimeOfDay;
+            notification.type = Type;
+            notification.description = Description;
+            notification.user_id = userId;
+            notification.notificationRead = 0;
+            db.Notifications.Add(notification);
+            db.SaveChanges();
+        }
         [HttpPost]
         public HttpResponseMessage NotifyUser(int userId, string Type, string Description)
         {
             try
             {
-                Notification notification = new Notification();
-                notification.date = DateTime.Today;
-                notification.time = DateTime.Now.TimeOfDay;
-                notification.type = Type;
-                notification.description = Description;
-                notification.user_id = userId;
-                notification.notificationRead = 0;
-                db.Notifications.Add(notification);
-                db.SaveChanges();
+                LocalNotifyUser(userId, Type, Description);
                 return Request.CreateResponse(HttpStatusCode.OK, "User Notified");
             }
             catch
@@ -644,7 +649,7 @@ namespace WebApi.Controllers
                 }
                 else if (userRole == "Conductor")
                 {
-                    AllHistory allHistory = new AllHistory();
+                    List<BusHistory> busHistory = new List<BusHistory>();
                     var travelFromDB = db.Travels.Join(db.Buses, t => t.bus_id, b => b.id, (t, b) => new { Travel = t, Bus = b })
                     .Join(db.Conductors, tb => tb.Bus.conductor_id, c => c.id, (tb, c) => new { Travel = tb.Travel, Conductor = c })
                     .Join(db.Users, tbc => tbc.Conductor.user_id, u => u.id, (tbc, u) => new { Travel = tbc.Travel, User = u })
@@ -666,55 +671,53 @@ namespace WebApi.Controllers
                         .Where(su => su.User.id == id && su.Start.date >= fromDate && su.Start.date <= toDate)
                         .Select(su => su.Start)
                         .ToList();
-                    List<ApiTravel> apiTravel = new List<ApiTravel>();
-                    List<ApiStart> apiStart = new List<ApiStart>();
-                    List<ApiReach> apiReaches = new List<ApiReach>();
                     for (int i = 0; i < travelFromDB.Count; i++)
                     {
-                        apiTravel.Add(new ApiTravel
+                        int stopId = Convert.ToInt32(travelFromDB[i].stop_id);
+                        string stopName = db.Stops.Where(s => s.id == stopId).Select(s => s.name).FirstOrDefault();
+
+                        busHistory.Add(new BusHistory
                         {
-                            Id = travelFromDB[i].id,
                             Date = travelFromDB[i].date.ToString(),
                             Time = travelFromDB[i].time.ToString(),
                             Type = travelFromDB[i].type.ToString(),
-                            PassId = Convert.ToInt32(travelFromDB[i].pass_id),
-                            StudentId = Convert.ToInt32(travelFromDB[i].student_id),
-                            BusId = Convert.ToInt32(travelFromDB[i].bus_id),
-                            RouteId = Convert.ToInt32(travelFromDB[i].route_id),
-                            StopId = Convert.ToInt32(travelFromDB[i].stop_id),
+                            Description = "Bus No: " + travelFromDB[i].bus_id.ToString() + "\nRoute No: " + travelFromDB[i].route_id.ToString()
+                            + "\nStop Name: " + stopName + "\nPass No: " + travelFromDB[i].pass_id.ToString(),
                         });
                     }
-                    allHistory.travelHistory = apiTravel;
                     for (int i = 0; i < startsFromDB.Count; i++)
                     {
-                        apiStart.Add(new ApiStart
+                        busHistory.Add(new BusHistory
                         {
-                            Id = startsFromDB[i].id,
                             Date = startsFromDB[i].date.ToString(),
                             Time = startsFromDB[i].time.ToString(),
-                            BusId = Convert.ToInt32(startsFromDB[i].bus_id),
-                            RouteId = Convert.ToInt32(startsFromDB[i].route_id),
+                            Type = "Journey Started",
+                            Description = "Bus No: " + startsFromDB[i].bus_id.ToString()
+                                          + "\nRoute No: " + startsFromDB[i].route_id.ToString(),
                         });
                     }
-                    allHistory.startHistory = apiStart;
                     for (int i = 0; i < reachesFromDB.Count; i++)
                     {
-                        apiReaches.Add(new ApiReach
+                        int stopId = Convert.ToInt32(reachesFromDB[i].stop_id);
+                        string stopName = db.Stops.Where(s => s.id == stopId).Select(s => s.name).FirstOrDefault();
+                        busHistory.Add(new BusHistory
                         {
-                            Id = reachesFromDB[i].id,
                             Date = reachesFromDB[i].date.ToString(),
                             Time = reachesFromDB[i].time.ToString(),
-                            BusId = Convert.ToInt32(reachesFromDB[i].bus_id),
-                            RouteId = Convert.ToInt32(reachesFromDB[i].route_id),
-                            StopId = Convert.ToInt32(reachesFromDB[i].stop_id),
+                            Type = "Reached at Stop",
+                            Description = "Bus No: " + reachesFromDB[i].bus_id.ToString() + "\nRoute No: " + reachesFromDB[i].route_id.ToString()
+                                        + "\nStop Name: " + stopName,
                         });
                     }
-                    allHistory.reachHistory = apiReaches;
-                    return Request.CreateResponse(HttpStatusCode.OK, allHistory);
+                    var orderedBusHistory = busHistory.OrderBy(bh => DateTime.Parse(bh.Date))
+                                      .ThenBy(bh => TimeSpan.Parse(bh.Time))
+                                      .ToList();
+
+                    return Request.CreateResponse(HttpStatusCode.OK, orderedBusHistory);
                 }
                 else if (userRole == "Admin")
                 {
-                    AllHistory allHistory = new AllHistory();
+                    List<BusHistory> busHistory = new List<BusHistory>();
                     var travelFromDB = db.Travels.Where(t => t.date >= fromDate && t.date <= toDate).ToList();
                     var startsFromDB = db.Starts.Where(s => s.date >= fromDate && s.date <= toDate).ToList();
                     var reachesFromDB = db.Reaches.Where(r => r.date >= fromDate && r.date <= toDate).ToList();
@@ -723,46 +726,47 @@ namespace WebApi.Controllers
                     List<ApiReach> apiReaches = new List<ApiReach>();
                     for (int i = 0; i < travelFromDB.Count; i++)
                     {
-                        apiTravel.Add(new ApiTravel
+                        int stopId = Convert.ToInt32(travelFromDB[i].stop_id);
+                        string stopName = db.Stops.Where(s => s.id == stopId).Select(s => s.name).FirstOrDefault();
+
+                        busHistory.Add(new BusHistory
                         {
-                            Id = travelFromDB[i].id,
                             Date = travelFromDB[i].date.ToString(),
                             Time = travelFromDB[i].time.ToString(),
                             Type = travelFromDB[i].type.ToString(),
-                            PassId = Convert.ToInt32(travelFromDB[i].pass_id),
-                            StudentId = Convert.ToInt32(travelFromDB[i].student_id),
-                            BusId = Convert.ToInt32(travelFromDB[i].bus_id),
-                            RouteId = Convert.ToInt32(travelFromDB[i].route_id),
-                            StopId = Convert.ToInt32(travelFromDB[i].stop_id),
+                            Description = "Bus No: " + travelFromDB[i].bus_id.ToString() + "\nRoute No: " + travelFromDB[i].route_id.ToString()
+                            + "\nStop Name: " + stopName + "\nPass No: " + travelFromDB[i].pass_id.ToString(),
                         });
                     }
-                    allHistory.travelHistory = apiTravel;
                     for (int i = 0; i < startsFromDB.Count; i++)
                     {
-                        apiStart.Add(new ApiStart
+                        busHistory.Add(new BusHistory
                         {
-                            Id = startsFromDB[i].id,
                             Date = startsFromDB[i].date.ToString(),
                             Time = startsFromDB[i].time.ToString(),
-                            BusId = Convert.ToInt32(startsFromDB[i].bus_id),
-                            RouteId = Convert.ToInt32(startsFromDB[i].route_id),
+                            Type = "Journey Started",
+                            Description = "Bus No: " + startsFromDB[i].bus_id.ToString()
+                                          + "\nRoute No: " + startsFromDB[i].route_id.ToString(),
                         });
                     }
-                    allHistory.startHistory = apiStart;
                     for (int i = 0; i < reachesFromDB.Count; i++)
                     {
-                        apiReaches.Add(new ApiReach
+                        int stopId = Convert.ToInt32(reachesFromDB[i].stop_id);
+                        string stopName = db.Stops.Where(s => s.id == stopId).Select(s => s.name).FirstOrDefault();
+                        busHistory.Add(new BusHistory
                         {
-                            Id = reachesFromDB[i].id,
                             Date = reachesFromDB[i].date.ToString(),
                             Time = reachesFromDB[i].time.ToString(),
-                            BusId = Convert.ToInt32(reachesFromDB[i].bus_id),
-                            RouteId = Convert.ToInt32(reachesFromDB[i].route_id),
-                            StopId = Convert.ToInt32(reachesFromDB[i].stop_id),
+                            Type = "Reached at Stop",
+                            Description = "Bus No: " + reachesFromDB[i].bus_id.ToString() + "\nRoute No: " + reachesFromDB[i].route_id.ToString()
+                                        + "\nStop Name: " + stopName,
                         });
                     }
-                    allHistory.reachHistory = apiReaches;
-                    return Request.CreateResponse(HttpStatusCode.OK, allHistory);
+                    var orderedBusHistory = busHistory.OrderBy(bh => DateTime.Parse(bh.Date))
+                                      .ThenBy(bh => TimeSpan.Parse(bh.Time))
+                                      .ToList();
+
+                    return Request.CreateResponse(HttpStatusCode.OK, orderedBusHistory);
                 }
                 else
                 {

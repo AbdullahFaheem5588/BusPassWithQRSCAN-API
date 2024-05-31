@@ -106,11 +106,12 @@ namespace WebApi.Models
         public int Route { get; set; }
 
     }
-    public class AllHistory
+    public class BusHistory
     {
-        public List<ApiTravel> travelHistory { get; set; }
-        public List<ApiStart> startHistory { get; set; }
-        public List<ApiReach> reachHistory { get; set; }
+        public string Date { get; set; }
+        public string Time { get; set; }
+        public string Type { get; set; }
+        public string Description { get; set; }
     }
     public class ApiTravel
     {

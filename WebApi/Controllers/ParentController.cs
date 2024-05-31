@@ -154,7 +154,7 @@ namespace WebApi.Controllers
                 if (childrenLocation.Count > 0)
                     return Request.CreateResponse(HttpStatusCode.OK, childrenLocation);
                 else
-                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Data Found");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No Data Found");
             }
             catch
             {
