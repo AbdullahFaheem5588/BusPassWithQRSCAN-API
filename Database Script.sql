@@ -157,3 +157,4 @@ JOIN Student s ON u.id = s.user_id
 JOIN FavouriteStops f ON s.id = f.student_id
 WHERE f.stop_id = 1;
 
+

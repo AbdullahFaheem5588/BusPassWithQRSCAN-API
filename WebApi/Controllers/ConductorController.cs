@@ -129,24 +129,24 @@ namespace WebApi.Controllers
                 {
                     bookedSeats = ((from t in db.Travels
                                     join b in db.Buses on t.bus_id equals b.id
-                                    where b.conductor_id == conductorId && t.date == new DateTime(2024, 5, 18)
+                                    where b.conductor_id == conductorId && t.date == DateTime.Today
                                     && t.type.Contains("pickup_checkin")
                                     select t).Count()) - ((from t in db.Travels
                                                            join b in db.Buses on t.bus_id equals b.id
                                                            where b.conductor_id == conductorId
-                                                           && t.date == new DateTime(2024, 5, 18) && t.type.Contains("pickup_checkout")
+                                                           && t.date == DateTime.Today && t.type.Contains("pickup_checkout")
                                                            select t).Count());
                 }
                 else if (startCount == 2)
                 {
                     bookedSeats = ((from t in db.Travels
                                     join b in db.Buses on t.bus_id equals b.id
-                                    where b.conductor_id == conductorId && t.date == new DateTime(2024, 5, 18)
+                                    where b.conductor_id == conductorId && t.date == DateTime.Today
                                     && t.type.Contains("dropoff_checkin")
                                     select t).Count()) - ((from t in db.Travels
                                                            join b in db.Buses on t.bus_id equals b.id
                                                            where b.conductor_id == conductorId
-                                                           && t.date == new DateTime(2024, 5, 18) && t.type.Contains("dropoff_checkout")
+                                                           && t.date == DateTime.Today && t.type.Contains("dropoff_checkout")
                                                            select t).Count());
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, bookedSeats);
