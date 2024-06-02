@@ -172,6 +172,7 @@ namespace WebApi.Models
     }
     public class BusDetails
     {
+        public int Id { get; set; }
         public string RegNo { get; set; }
         public int TotalSeats { get; set; }
         public ApiConductor Conductor { get; set; }

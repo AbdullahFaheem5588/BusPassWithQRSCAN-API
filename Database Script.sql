@@ -154,5 +154,3 @@ JOIN Student s ON u.id = s.user_id
 JOIN FavouriteStops f ON s.id = f.student_id
 WHERE f.stop_id = 1;
 
-
-Select s.* from Stops s inner join RouteStop rs on s.id = rs.stop_id where rs.route_id = 1

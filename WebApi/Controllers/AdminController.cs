@@ -201,6 +201,8 @@ namespace WebApi.Controllers
                     {
                         ApiStudent apiStudent = new ApiStudent
                         {
+                            Id = studentDetails.id,
+                            PassId = Convert.ToInt32(studentDetails.pass_id),
                             Name = studentDetails.name,
                             RegNo = studentDetails.regno,
                             Contact = studentDetails.contact,
@@ -218,7 +220,7 @@ namespace WebApi.Controllers
                     var parentDetails = db.Parents.Find(id);
                     if (parentDetails != null)
                     {
-                        ApiParent apiParent = new ApiParent { Name = parentDetails.name, Contact = parentDetails.contact };
+                        ApiParent apiParent = new ApiParent { Id = parentDetails.id, Name = parentDetails.name, Contact = parentDetails.contact };
                         return Request.CreateResponse(HttpStatusCode.OK, apiParent);
                     }
                     else
@@ -231,7 +233,7 @@ namespace WebApi.Controllers
                     var conductorDetails = db.Conductors.Find(id);
                     if (conductorDetails != null)
                     {
-                        ApiConductor apiConductor = new ApiConductor { Name = conductorDetails.name, Contact = conductorDetails.contact };
+                        ApiConductor apiConductor = new ApiConductor { Id = conductorDetails.id, Name = conductorDetails.name, Contact = conductorDetails.contact };
                         return Request.CreateResponse(HttpStatusCode.OK, apiConductor);
                     }
                     else
@@ -252,6 +254,7 @@ namespace WebApi.Controllers
                         };
                         BusDetails busDetails = new BusDetails
                         {
+                            Id = bus.id,
                             RegNo = bus.regno,
                             TotalSeats = Convert.ToInt32(bus.totalSeats),
                             Conductor = conductorDetails,
@@ -282,7 +285,12 @@ namespace WebApi.Controllers
                     var stop = db.Stops.Find(id);
                     if (stop != null)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, stop.name);
+                        ApiStops apiStops = new ApiStops
+                        {
+                            Id = stop.id,
+                            Name = stop.name,
+                        };
+                        return Request.CreateResponse(HttpStatusCode.OK, apiStops);
                     }
                     else
                     {
@@ -323,6 +331,170 @@ namespace WebApi.Controllers
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, "Invalid Searching Category!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        [HttpPut]
+        public HttpResponseMessage UpdateStudent(ApiStudent apiStudent)
+        {
+            try
+            {
+                var studentDetails = db.Students.Where(s => s.pass_id == apiStudent.PassId).FirstOrDefault();
+                var passDetails = db.Passes.Find(apiStudent.PassId);
+                if (studentDetails != null && passDetails != null)
+                {
+                    studentDetails.name = apiStudent.Name;
+                    studentDetails.regno = apiStudent.RegNo;
+                    studentDetails.contact = apiStudent.Contact;
+                    passDetails.status = apiStudent.PassStatus;
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Student Details Updated!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No Such Student Found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        [HttpPut]
+        public HttpResponseMessage UpdateParent(ApiParent apiParent)
+        {
+            try
+            {
+                var parentDetails = db.Parents.Find(apiParent.Id);
+                if (parentDetails != null)
+                {
+                    parentDetails.name = apiParent.Name;
+                    parentDetails.contact = apiParent.Contact;
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Parent Details Updated!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No Such Parent Found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        [HttpPut]
+        public HttpResponseMessage UpdateConductor(ApiConductor apiConductor)
+        {
+            try
+            {
+                var conductorDetails = db.Conductors.Find(apiConductor.Id);
+                if (conductorDetails != null)
+                {
+                    conductorDetails.name = apiConductor.Name;
+                    conductorDetails.contact = apiConductor.Contact;
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Conductor Details Updated!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No Such Conductor Found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        [HttpPut]
+        public HttpResponseMessage UpdateBus(BusDetails busDetails)
+        {
+            try
+            {
+                var bus = db.Buses.Find(busDetails.Id);
+                if (bus != null)
+                {
+                    bus.regno = busDetails.RegNo;
+                    bus.totalSeats = busDetails.TotalSeats;
+                    bus.conductor_id = busDetails.Conductor.Id;
+
+                    var recordsToDelete = db.IsAssigneds.Where(ia => ia.bus_id == busDetails.Id).ToList();
+                    db.IsAssigneds.RemoveRange(recordsToDelete);
+
+                    for (int i = 0; i < busDetails.Routes.Count; i++)
+                    {
+                        db.IsAssigneds.Add(new IsAssigned
+                        {
+                            bus_id = busDetails.Id,
+                            route_id = busDetails.Routes[i].RouteId,
+                        });
+                    }
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Bus Details Updated!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No Such Bus Found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        [HttpPut]
+        public HttpResponseMessage UpdateStop(ApiStops apiStops)
+        {
+            try
+            {
+                var stop = db.Stops.Find(apiStops.Id);
+                if (stop != null)
+                {
+                    stop.name = apiStops.Name;
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Stop Details Updated!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No Such Stop Found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        [HttpPut]
+        public HttpResponseMessage UpdateRoute(Routes apiRoute)
+        {
+            try
+            {
+                var route = db.Routes.Find(apiRoute.RouteId);
+                if (route != null)
+                {
+                    route.Title = apiRoute.RouteTitle;
+
+                    var recordsToDelete = db.RouteStops.Where(rs => rs.route_id == apiRoute.RouteId).ToList();
+                    db.RouteStops.RemoveRange(recordsToDelete);
+
+                    for (int i = 0; i < apiRoute.Stops.Count; i++)
+                    {
+                        db.RouteStops.Add(new RouteStop
+                        {
+                            route_id = apiRoute.RouteId,
+                            stop_id = apiRoute.Stops[i].Id,
+                        });
+                    }
+                    db.SaveChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK, "Route Details Updated!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No Such Route Found!");
                 }
             }
             catch (Exception ex)
