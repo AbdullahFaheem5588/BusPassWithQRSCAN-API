@@ -74,7 +74,24 @@ namespace WebApi.Controllers
                     Timing = nextStop.RouteStop.stoptiming.ToString(),
                     Route = routeId.Value
                 };
-
+                if (nextStopDetails != null)
+                {
+                    List<int> listOfIds = (from u in db.Users
+                                           join s in db.Students on u.id equals s.user_id
+                                           join f in db.FavouriteStops on s.id equals f.student_id
+                                           where f.stop_id == nextStopDetails.Id
+                                           select u.id).ToList();
+                    UsersController usersController = new UsersController();
+                    for (int i = 0; i < listOfIds.Count; i++)
+                    {
+                        var description = ("Bus No " + busId + " is Enroute to your Favourite Stop: " + nextStopDetails.Name);
+                        var duplicationCheck = db.Notifications.Where(n => n.user_id == listOfIds[i] && n.description == description
+                        && n.time > db.Starts.Where(s => s.bus_id == busId && s.date == DateTime.Today).OrderByDescending(s => s.time).Select(s => s.time)
+                        .FirstOrDefault());
+                        if (duplicationCheck == null)
+                            usersController.LocalNotifyUser(listOfIds[i], "Bus En-route!", description);
+                    }
+                }
                 return Request.CreateResponse(HttpStatusCode.OK, nextStopDetails);
             }
             catch (Exception ex)
@@ -350,6 +367,15 @@ namespace WebApi.Controllers
                             reached.stop_id = null;
                         db.Reaches.Add(reached);
                         db.SaveChanges();
+                        var routeStop = db.RouteStops.Where(rs => rs.route_id == routeId && rs.stop_id == stopId).FirstOrDefault();
+                        var averageTime = db.Reaches.Where(r => r.route_id == routeId && r.stop_id == stopId)
+                        .Select(r => r.time.HasValue ? (double?)r.time.Value.TotalSeconds : null).Average();
+                        if (averageTime.HasValue)
+                        {
+                            routeStop.stoptiming = TimeSpan.FromSeconds(averageTime.Value);
+                            db.SaveChanges();
+                        }
+
                         return Request.CreateResponse(HttpStatusCode.OK, "Reached at Stop: " + reached.stop_id);
                     }
                     else

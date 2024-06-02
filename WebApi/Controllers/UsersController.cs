@@ -119,7 +119,7 @@ namespace WebApi.Controllers
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Username Already Taken!");
+                    return Request.CreateResponse(HttpStatusCode.Conflict, "Username Already Taken!");
                 }
             }
             catch
@@ -160,7 +160,7 @@ namespace WebApi.Controllers
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Username Already Taken!");
+                    return Request.CreateResponse(HttpStatusCode.Conflict, "Username Already Taken!");
                 }
             }
             catch
@@ -197,11 +197,11 @@ namespace WebApi.Controllers
                     };
                     db.Parents.Add(newParent);
                     db.SaveChanges();
-                    return Request.CreateResponse(HttpStatusCode.OK, "Parent Inserted Successfully");
+                    return Request.CreateResponse(HttpStatusCode.OK, newParent.id);
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Username Already Taken!");
+                    return Request.CreateResponse(HttpStatusCode.Conflict, "Username Already Taken!");
                 }
             }
             catch
@@ -237,11 +237,11 @@ namespace WebApi.Controllers
                     };
                     db.Conductors.Add(newConductor);
                     db.SaveChanges();
-                    return Request.CreateResponse(HttpStatusCode.OK, "Conductor Inserted Successfully");
+                    return Request.CreateResponse(HttpStatusCode.OK, newConductor.id);
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Username Already Taken!");
+                    return Request.CreateResponse(HttpStatusCode.Conflict, "Username Already Taken!");
                 }
             }
             catch

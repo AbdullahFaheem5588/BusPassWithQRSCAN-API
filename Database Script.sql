@@ -127,9 +127,6 @@ Select * from Stops
 Select * from Travels
 Select * from TracksLocation
 
-update Pass set status = 'Active' 
-Select * from Pass
-
 Insert into Travels Values(GETDATE(), '07:46:00','pickup_checkin', 5,5,2,2,5)
 
 Update Reaches set stop_id = 2 where id = 12
@@ -158,3 +155,4 @@ JOIN FavouriteStops f ON s.id = f.student_id
 WHERE f.stop_id = 1;
 
 
+Select s.* from Stops s inner join RouteStop rs on s.id = rs.stop_id where rs.route_id = 1

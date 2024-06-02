@@ -170,4 +170,12 @@ namespace WebApi.Models
         public string RouteTitle { get; set; }
         public List<ApiStops> Stops { get; set; }
     }
+    public class BusDetails
+    {
+        public string RegNo { get; set; }
+        public int TotalSeats { get; set; }
+        public ApiConductor Conductor { get; set; }
+        public List<Routes> Routes { get; set; }
+
+    }
 }
