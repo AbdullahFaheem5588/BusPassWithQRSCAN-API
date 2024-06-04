@@ -12,7 +12,7 @@ namespace WebApi.Controllers
     {
         BusPassWithQRScanEntities db = new BusPassWithQRScanEntities();
         [HttpGet]
-        public HttpResponseMessage GetAllStops()
+        public HttpResponseMessage GetAllRoutes()
         {
             try
             {
@@ -42,6 +42,30 @@ namespace WebApi.Controllers
                     apiRoute.Add(apiStops);
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, apiRoute);
+            }
+            catch
+            {
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+            }
+
+        }
+        [HttpGet]
+        public HttpResponseMessage GetAllStops()
+        {
+            try
+            {
+                var stops = db.Stops.ToList();
+                List<ApiStops> apiStops = new List<ApiStops>();
+                foreach (var stop in stops)
+                {
+                    apiStops.Add(new ApiStops
+                    {
+                        Id = stop.id,
+                        Name = stop.name,
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, apiStops);
             }
             catch
             {

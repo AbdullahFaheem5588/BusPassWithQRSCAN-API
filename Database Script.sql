@@ -148,9 +148,9 @@ delete from Starts where id > 14
 delete from Travels where id > 9
 delete from Notifications where id > 5268
 
+
 SELECT u.id
 FROM Users u
 JOIN Student s ON u.id = s.user_id
 JOIN FavouriteStops f ON s.id = f.student_id
 WHERE f.stop_id = 1;
-

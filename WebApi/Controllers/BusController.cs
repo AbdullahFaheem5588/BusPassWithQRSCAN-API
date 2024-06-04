@@ -20,18 +20,25 @@ namespace WebApi.Controllers
                 List<BusLocation> busLocationList = new List<BusLocation>();
                 for (int i = 0; i < buses.Count; i++)
                 {
-                    int busId = Convert.ToInt16(buses[i].id);
-                    var locationFromDb = db.TracksLocations.Where(t => t.bus_id == busId && t.date == DateTime.Today).OrderByDescending(t => t.time).FirstOrDefault();
-                    if (locationFromDb != null)
+                    var bus = buses.Skip(i).FirstOrDefault();
+                    if (bus != null)
                     {
-                        BusLocation busLocation = new BusLocation();
-                        busLocation.BusId = buses[i].id;
-                        busLocation.Cords = new Location
+                        int busId = bus.id;
+                        var locationFromDb = db.TracksLocations.Where(t => t.bus_id == busId && t.date == DateTime.Today).OrderByDescending(t => t.time).FirstOrDefault();
+                        if (locationFromDb != null)
                         {
-                            latitude = Convert.ToDouble(locationFromDb.latitude),
-                            longitude = Convert.ToDouble(locationFromDb.longitude),
-                        };
-                        busLocationList.Add(busLocation);
+                            BusLocation busLocation = new BusLocation();
+                            busLocation.BusId = busId;
+                            var routeId = db.Starts.Where(s => s.date == DateTime.Today && s.bus_id == busId).OrderByDescending(s => s.time).Select(s => s.route_id).FirstOrDefault();
+                            busLocation.RouteId = Convert.ToInt32(routeId);
+                            busLocation.RouteTitle = db.Routes.Where(r => r.id == busLocation.RouteId).Select(r => r.Title).FirstOrDefault();
+                            busLocation.Cords = new Location
+                            {
+                                latitude = Convert.ToDouble(locationFromDb.latitude),
+                                longitude = Convert.ToDouble(locationFromDb.longitude),
+                            };
+                            busLocationList.Add(busLocation);
+                        }
                     }
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, busLocationList);

@@ -116,6 +116,7 @@ namespace WebApi.Controllers
                     {
                         route_id = newRoute.id,
                         stop_id = route.Stops[i].Id,
+                        stoptiming = null,
                     });
                 }
                 db.SaveChanges();
@@ -153,6 +154,26 @@ namespace WebApi.Controllers
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, "Invalid Pass Id");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet]
+        public HttpResponseMessage ValidatePass(int passId)
+        {
+            try
+            {
+                var passDetails = db.Passes.Find(passId);
+                if (passDetails != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, passDetails.status);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Invalid!");
                 }
             }
             catch (Exception ex)

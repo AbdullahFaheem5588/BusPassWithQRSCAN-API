@@ -93,10 +93,10 @@ namespace WebApi.Controllers
 
                     Pass newPass = new Pass
                     {
-                        status = student.PassStatus,
+                        status = "Active",
                         passexpiry = DateTime.Parse(student.PassExpiry),
                         totaljourneys = student.TotalJourneys,
-                        remainingjourneys = student.RemainingJourneys
+                        remainingjourneys = student.TotalJourneys
                     };
                     db.Passes.Add(newPass);
                     db.SaveChanges();
@@ -248,6 +248,30 @@ namespace WebApi.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error Inserting Conductor");
             }
+        }
+        [HttpGet]
+        public HttpResponseMessage GetAllParents()
+        {
+            try
+            {
+                var parents = db.Parents.ToList();
+                List<ApiParent> apiParents = new List<ApiParent>();
+                foreach (var parent in parents)
+                {
+                    apiParents.Add(new ApiParent
+                    {
+                        Id = parent.id,
+                        Name = parent.name,
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, apiParents);
+            }
+            catch
+            {
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+            }
+
         }
         [HttpGet]
         public HttpResponseMessage GetUserById(int id)
@@ -700,6 +724,8 @@ namespace WebApi.Controllers
                     {
                         int stopId = Convert.ToInt32(reachesFromDB[i].stop_id);
                         string stopName = db.Stops.Where(s => s.id == stopId).Select(s => s.name).FirstOrDefault();
+                        if (stopId == 0)
+                            stopName = "BIIT";
                         busHistory.Add(new BusHistory
                         {
                             Date = reachesFromDB[i].date.ToString(),
@@ -753,6 +779,8 @@ namespace WebApi.Controllers
                     {
                         int stopId = Convert.ToInt32(reachesFromDB[i].stop_id);
                         string stopName = db.Stops.Where(s => s.id == stopId).Select(s => s.name).FirstOrDefault();
+                        if (stopId == 0)
+                            stopName = "BIIT";
                         busHistory.Add(new BusHistory
                         {
                             Date = reachesFromDB[i].date.ToString(),

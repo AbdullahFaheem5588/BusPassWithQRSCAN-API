@@ -75,6 +75,8 @@ namespace WebApi.Models
     public class BusLocation
     {
         public int BusId { get; set; }
+        public int RouteId { get; set; }
+        public string RouteTitle { get; set; }
         public Location Cords { get; set; }
     }
     public class ApiNotification

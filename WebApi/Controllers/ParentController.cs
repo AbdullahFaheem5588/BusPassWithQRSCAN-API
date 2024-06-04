@@ -90,7 +90,8 @@ namespace WebApi.Controllers
                         if (history.Last().type == "pickup_checkin")
                         {
                             int PickupBusId = Convert.ToInt32(history[0].bus_id);
-                            List<TracksLocation> locationsFromDB = db.TracksLocations.Where(h => h.date == DateTime.Today && h.bus_id == PickupBusId).ToList();
+                            TimeSpan historyTime = TimeSpan.Parse(history[0].time.ToString());
+                            List<TracksLocation> locationsFromDB = db.TracksLocations.Where(h => h.date == DateTime.Today && h.bus_id == PickupBusId && h.time >= historyTime).ToList();
                             for (int i = 0; i < locationsFromDB.Count; i++)
                             {
                                 location.Add(new Location
