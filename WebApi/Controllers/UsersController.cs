@@ -274,6 +274,30 @@ namespace WebApi.Controllers
 
         }
         [HttpGet]
+        public HttpResponseMessage GetAllConductors()
+        {
+            try
+            {
+                var conductors = db.Conductors.ToList();
+                List<ApiConductor> apiConductors = new List<ApiConductor>();
+                foreach (var conductor in conductors)
+                {
+                    apiConductors.Add(new ApiConductor
+                    {
+                        Id = conductor.id,
+                        Name = conductor.name,
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, apiConductors);
+            }
+            catch
+            {
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+            }
+
+        }
+        [HttpGet]
         public HttpResponseMessage GetUserById(int id)
         {
             SingleUser singleUser = new SingleUser();
@@ -699,6 +723,8 @@ namespace WebApi.Controllers
                     {
                         int stopId = Convert.ToInt32(travelFromDB[i].stop_id);
                         string stopName = db.Stops.Where(s => s.id == stopId).Select(s => s.name).FirstOrDefault();
+                        if (stopId == 0)
+                            stopName = "BIIT";
 
                         busHistory.Add(new BusHistory
                         {
@@ -754,6 +780,8 @@ namespace WebApi.Controllers
                     {
                         int stopId = Convert.ToInt32(travelFromDB[i].stop_id);
                         string stopName = db.Stops.Where(s => s.id == stopId).Select(s => s.name).FirstOrDefault();
+                        if (stopId == 0)
+                            stopName = "BIIT";
 
                         busHistory.Add(new BusHistory
                         {

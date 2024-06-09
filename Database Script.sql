@@ -127,6 +127,11 @@ Select * from Stops
 Select * from Travels
 Select * from TracksLocation
 
+delete from IsAssigned where id > 8
+delete from bus where id > 6
+delete from Conductor where id > 2
+delete from Users where id > 30
+
 Insert into Travels Values(GETDATE(), '07:46:00','pickup_checkin', 5,5,2,2,5)
 
 Update Reaches set stop_id = 2 where id = 12
@@ -141,12 +146,11 @@ SELECT COUNT(*) FROM Reaches WHERE date = '2024-05-25' AND bus_id = 1 AND time >
 
 Select Top(1) s.route_id from Starts s inner join Bus b on b.id = s.bus_id where s.date = '2024-05-25' AND b.conductor_id = 1 order by s.time desc
 
-delete from Reaches where id > 90
-delete from Notifications where id > 5268
-delete from TracksLocation where id > 320
-delete from Starts where id > 14
-delete from Travels where id > 9
-delete from Notifications where id > 5268
+delete from Reaches where id > 168
+delete from Notifications where id > 18485
+delete from TracksLocation where id > 2129
+delete from Starts where id > 72
+delete from Travels where id > 27
 
 
 SELECT u.id
@@ -154,3 +158,7 @@ FROM Users u
 JOIN Student s ON u.id = s.user_id
 JOIN FavouriteStops f ON s.id = f.student_id
 WHERE f.stop_id = 1;
+
+update RouteStop set stoptiming = '17:30:00' where id = 25 or id = 27
+Select * from Route
+Select * from RouteStop

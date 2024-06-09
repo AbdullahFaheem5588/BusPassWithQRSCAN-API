@@ -74,5 +74,30 @@ namespace WebApi.Controllers
             }
 
         }
+        [HttpGet]
+        public HttpResponseMessage GetAllRoutesTitle()
+        {
+            try
+            {
+                var routes = db.Routes.ToList();
+                List<Routes> apiRoute = new List<Routes>();
+                for (int i = 0; i < routes.Count; i++)
+                {
+                    Routes route = new Routes
+                    {
+                        RouteId = routes[i].id,
+                        RouteTitle = routes[i].Title,
+                    };
+                    apiRoute.Add(route);
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, apiRoute);
+            }
+            catch
+            {
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+            }
+
+        }
     }
 }
