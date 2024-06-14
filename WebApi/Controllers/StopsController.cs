@@ -12,13 +12,14 @@ namespace WebApi.Controllers
     {
         BusPassWithQRScanEntities db = new BusPassWithQRScanEntities();
         [HttpGet]
-        public HttpResponseMessage GetAllRoutes()
+        public HttpResponseMessage GetAllRoutes(int OrganizationId)
         {
             try
             {
+                var sharedRoutes = db.RouteSharings.Where(rs => rs.organization2_id == OrganizationId && rs.Status == "Accepted").Select(rs => rs.route_id).ToList();
                 var stops = db.Stops.ToList();
                 var routeStop = db.RouteStops.ToList();
-                var route = db.Routes.ToList();
+                var route = db.Routes.Where(r => r.organization_id == OrganizationId).ToList();
                 List<List<ApiStops>> apiRoute = new List<List<ApiStops>>();
                 for (int i = 0; i < route.Count; i++)
                 {
@@ -37,6 +38,27 @@ namespace WebApi.Controllers
                         apiStop.Latitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.latitude;
                         apiStop.Longitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.longitude;
                         apiStop.Route = route[i].id;
+                        apiStops.Add(apiStop);
+                    }
+                    apiRoute.Add(apiStops);
+                }
+                for (int i = 0; i < sharedRoutes.Count; i++)
+                {
+                    List<ApiStops> apiStops = new List<ApiStops>();
+                    var stopsInRoute = routeStop.Where(rs => rs.route_id == sharedRoutes[i]).Select(rs => new
+                    {
+                        StopId = rs.stop_id,
+                        StopTiming = rs.stoptiming,
+                    }).ToList();
+                    for (int j = 0; j < stopsInRoute.Count; j++)
+                    {
+                        ApiStops apiStop = new ApiStops();
+                        apiStop.Id = Convert.ToInt32(stopsInRoute[j].StopId);
+                        apiStop.Name = stops.FirstOrDefault(s => s.id == apiStop.Id)?.name;
+                        apiStop.Timing = stopsInRoute[j].StopTiming.ToString();
+                        apiStop.Latitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.latitude;
+                        apiStop.Longitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.longitude;
+                        apiStop.Route = Convert.ToInt32(sharedRoutes[i]);
                         apiStops.Add(apiStop);
                     }
                     apiRoute.Add(apiStops);
@@ -75,11 +97,11 @@ namespace WebApi.Controllers
 
         }
         [HttpGet]
-        public HttpResponseMessage GetAllRoutesTitle()
+        public HttpResponseMessage GetAllRoutesTitle(int OrganizationId)
         {
             try
             {
-                var routes = db.Routes.ToList();
+                var routes = db.Routes.Where(r => r.organization_id == OrganizationId).ToList();
                 List<Routes> apiRoute = new List<Routes>();
                 for (int i = 0; i < routes.Count; i++)
                 {

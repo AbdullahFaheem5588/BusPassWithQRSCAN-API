@@ -12,13 +12,13 @@ namespace WebApi.Controllers
     {
         BusPassWithQRScanEntities db = new BusPassWithQRScanEntities();
         [HttpGet]
-        public HttpResponseMessage GetBusDetails()
+        public HttpResponseMessage GetBusDetails(int OrganizationId)
         {
             try
             {
                 var busDetailsList = new List<object>();
 
-                var buses = db.Buses.ToList();
+                var buses = db.Buses.Where(b => b.organization_id == OrganizationId).ToList();
 
                 foreach (var bus in buses)
                 {
@@ -108,6 +108,7 @@ namespace WebApi.Controllers
                 Route newRoute = new Route
                 {
                     Title = route.RouteTitle,
+                    organization_id = route.OrganizationId,
                 };
                 db.Routes.Add(newRoute);
                 for (int i = 0; i < route.Stops.Count; i++)
@@ -162,12 +163,13 @@ namespace WebApi.Controllers
             }
         }
         [HttpGet]
-        public HttpResponseMessage ValidatePass(int passId)
+        public HttpResponseMessage ValidatePass(int passId, int adminOrganizationId)
         {
             try
             {
+                var studentOrganizationId = (from u in db.Users join s in db.Students on u.id equals s.user_id where s.pass_id == passId select u.organization_id).FirstOrDefault();
                 var passDetails = db.Passes.Find(passId);
-                if (passDetails != null)
+                if (passDetails != null && studentOrganizationId == adminOrganizationId)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, passDetails.status);
                 }
@@ -523,6 +525,5 @@ namespace WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
-
     }
 }

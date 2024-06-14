@@ -9,6 +9,7 @@ namespace WebApi.Models
         public ApiConductor Conductors { get; set; }
         public ApiParent Parents { get; set; }
         public ApiStudent Students { get; set; }
+        public ApiSuperAdmin SuperAdmin { get; set; }
         public string userRole { get; set; }
     }
     public class ApiAdmin
@@ -18,6 +19,7 @@ namespace WebApi.Models
         public string Contact { get; set; }
         public string Gender { get; set; }
         public int UserId { get; set; }
+        public int OrganizationId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
     }
@@ -27,6 +29,7 @@ namespace WebApi.Models
         public string Name { get; set; }
         public string Contact { get; set; }
         public int UserId { get; set; }
+        public int OrganizationId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public int BusId { get; set; }
@@ -40,6 +43,7 @@ namespace WebApi.Models
         public string Contact { get; set; }
         public int ChildrenEnroll { get; set; }
         public int UserId { get; set; }
+        public int OrganizationId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
     }
@@ -58,7 +62,14 @@ namespace WebApi.Models
         public int RemainingJourneys { get; set; }
         public int ParentId { get; set; }
         public int UserId { get; set; }
+        public int OrganizationId { get; set; }
         public int PassId { get; set; }
+    }
+    public class ApiSuperAdmin
+    {
+        public int Id { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
     public class ChildTimings
     {
@@ -169,12 +180,14 @@ namespace WebApi.Models
     public class Routes
     {
         public int RouteId { get; set; }
+        public int OrganizationId { get; set; }
         public string RouteTitle { get; set; }
         public List<ApiStops> Stops { get; set; }
     }
     public class BusDetails
     {
         public int Id { get; set; }
+        public int OrganizationId { get; set; }
         public string RegNo { get; set; }
         public int TotalSeats { get; set; }
         public ApiConductor Conductor { get; set; }

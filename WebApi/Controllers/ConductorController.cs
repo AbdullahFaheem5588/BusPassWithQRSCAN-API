@@ -17,6 +17,7 @@ namespace WebApi.Controllers
         {
             try
             {
+                var OrganizationId = (from u in db.Users join c in db.Conductors on u.id equals c.user_id where (c.id == conductorId) select (u.organization_id)).FirstOrDefault();
                 var busId = db.Conductors.Where(c => c.id == conductorId)
                     .Join(db.Buses, c => c.id, b => b.conductor_id, (c, b) => b.id)
                     .FirstOrDefault();
@@ -79,7 +80,7 @@ namespace WebApi.Controllers
                     List<int> listOfIds = (from u in db.Users
                                            join s in db.Students on u.id equals s.user_id
                                            join f in db.FavouriteStops on s.id equals f.student_id
-                                           where f.stop_id == nextStopDetails.Id
+                                           where f.stop_id == nextStopDetails.Id && u.organization_id == Convert.ToInt32(OrganizationId)
                                            select u.id).ToList();
                     UsersController usersController = new UsersController();
                     for (int i = 0; i < listOfIds.Count; i++)
@@ -445,77 +446,88 @@ namespace WebApi.Controllers
         {
             try
             {
-                var notificationType = "";
-                var passDetails = db.Passes.Find(passId);
-                var studentDetails = db.Students.Where(s => s.pass_id == passId).FirstOrDefault();
-                int travelRecordCount = db.Travels.Where(t => t.pass_id == passId && t.date == DateTime.Today).Count();
-                string notificationDescription = "";
-                ApiStudent apiStudent = new ApiStudent();
-                if (passDetails != null && studentDetails != null)
+                var startedRouteId = db.Starts.Where(s => s.bus_id == busId && s.date == DateTime.Today).OrderByDescending(s => s.id).FirstOrDefault().route_id;
+                if (startedRouteId != null)
                 {
-                    apiStudent.Name = studentDetails.name;
-                    apiStudent.RegNo = studentDetails.regno;
-                    apiStudent.RemainingJourneys = Convert.ToInt32(passDetails.remainingjourneys);
-                    apiStudent.Gender = studentDetails.gender;
-                    apiStudent.PassId = Convert.ToInt32(studentDetails.pass_id);
-                    apiStudent.PassExpiry = passDetails.passexpiry.ToString();
-                    apiStudent.PassStatus = passDetails.status;
-
-                    if (passDetails.status == "Active")
+                    var busOrganizationId = db.Buses.Where(b => b.id == busId).Select(b => b.organization_id).FirstOrDefault();
+                    var studentOrganizationId = (from u in db.Users join s in db.Students on u.id equals s.user_id where s.pass_id == passId select u.organization_id).FirstOrDefault();
+                    var sharedRouteChecher = db.RouteSharings.Where(rs => rs.organization1_id == busOrganizationId && rs.organization2_id == studentOrganizationId && rs.route_id == startedRouteId && rs.Status == "Accepted").Count();
+                    var notificationType = "";
+                    var passDetails = db.Passes.Find(passId);
+                    var studentDetails = db.Students.Where(s => s.pass_id == passId).FirstOrDefault();
+                    int travelRecordCount = db.Travels.Where(t => t.pass_id == passId && t.date == DateTime.Today).Count();
+                    string notificationDescription = "";
+                    ApiStudent apiStudent = new ApiStudent();
+                    if (passDetails != null && studentDetails != null && (busOrganizationId == studentOrganizationId || sharedRouteChecher == 1))
                     {
-                        Travel travel = new Travel
-                        {
-                            date = DateTime.Today,
-                            time = DateTime.Now.TimeOfDay,
-                            pass_id = passDetails.id,
-                            student_id = studentDetails.id,
-                            bus_id = busId,
-                            route_id = db.Starts.Where(s => s.bus_id == busId && s.date == DateTime.Today).OrderByDescending(s => s.id).FirstOrDefault().route_id,
-                            stop_id = db.Reaches.Where(r => r.bus_id == busId && r.date == DateTime.Today).OrderByDescending(r => r.id).FirstOrDefault().stop_id,
-                        };
-                        if (travelRecordCount == 0)
-                        {
-                            travel.type = "pickup_checkin";
-                            notificationType = "Check In!";
-                            notificationDescription = "Checked-In to Bus No " + busId + " following Route No " + travel.route_id;
-                            passDetails.remainingjourneys--;
-                        }
-                        else if (travelRecordCount == 1)
-                        {
-                            travel.type = "pickup_checkout";
-                            notificationType = "Check Out!";
-                            notificationDescription = "Checked-Out of Bus No " + busId + " following Route No " + travel.route_id;
-                            if (passDetails.remainingjourneys == 0)
-                                passDetails.status = "In-Active";
-                        }
-                        else if (travelRecordCount == 2)
-                        {
-                            travel.type = "dropoff_checkin";
-                            notificationType = "Check In!";
-                            notificationDescription = "Checked-In to Bus No " + busId + " following Route No " + travel.route_id;
-                            passDetails.remainingjourneys--;
-                        }
-                        else if (travelRecordCount == 3)
-                        {
-                            travel.type = "dropoff_checkout";
-                            notificationType = "Check Out!";
-                            notificationDescription = "Checked-Out of Bus No " + busId + " following Route No " + travel.route_id;
-                            if (passDetails.remainingjourneys == 0)
-                                passDetails.status = "In-Active";
-                        }
-                        db.Travels.Add(travel);
-                        db.SaveChanges();
-                        UsersController usersController = new UsersController();
-                        usersController.LocalNotifyUser(Convert.ToInt32(studentDetails.user_id), notificationType, notificationDescription);
-                        int parentUserId = Convert.ToInt32(db.Parents.Where(p => p.id == studentDetails.parent_id).Select(p => p.user_id).FirstOrDefault());
-                        usersController.LocalNotifyUser(parentUserId, notificationType, studentDetails.name + " " + notificationDescription);
-                    }
+                        apiStudent.Name = studentDetails.name;
+                        apiStudent.RegNo = studentDetails.regno;
+                        apiStudent.RemainingJourneys = Convert.ToInt32(passDetails.remainingjourneys);
+                        apiStudent.Gender = studentDetails.gender;
+                        apiStudent.PassId = Convert.ToInt32(studentDetails.pass_id);
+                        apiStudent.PassExpiry = passDetails.passexpiry.ToString();
+                        apiStudent.PassStatus = passDetails.status;
 
-                    return Request.CreateResponse(HttpStatusCode.OK, apiStudent);
+                        if (passDetails.status == "Active")
+                        {
+                            Travel travel = new Travel
+                            {
+                                date = DateTime.Today,
+                                time = DateTime.Now.TimeOfDay,
+                                pass_id = passDetails.id,
+                                student_id = studentDetails.id,
+                                bus_id = busId,
+                                route_id = startedRouteId,
+                                stop_id = db.Reaches.Where(r => r.bus_id == busId && r.date == DateTime.Today).OrderByDescending(r => r.id).FirstOrDefault().stop_id,
+                            };
+                            if (travelRecordCount == 0)
+                            {
+                                travel.type = "pickup_checkin";
+                                notificationType = "Check In!";
+                                notificationDescription = "Checked-In to Bus No " + busId + " following Route No " + travel.route_id;
+                                passDetails.remainingjourneys--;
+                            }
+                            else if (travelRecordCount == 1)
+                            {
+                                travel.type = "pickup_checkout";
+                                notificationType = "Check Out!";
+                                notificationDescription = "Checked-Out of Bus No " + busId + " following Route No " + travel.route_id;
+                                if (passDetails.remainingjourneys == 0)
+                                    passDetails.status = "In-Active";
+                            }
+                            else if (travelRecordCount == 2)
+                            {
+                                travel.type = "dropoff_checkin";
+                                notificationType = "Check In!";
+                                notificationDescription = "Checked-In to Bus No " + busId + " following Route No " + travel.route_id;
+                                passDetails.remainingjourneys--;
+                            }
+                            else if (travelRecordCount == 3)
+                            {
+                                travel.type = "dropoff_checkout";
+                                notificationType = "Check Out!";
+                                notificationDescription = "Checked-Out of Bus No " + busId + " following Route No " + travel.route_id;
+                                if (passDetails.remainingjourneys == 0)
+                                    passDetails.status = "In-Active";
+                            }
+                            db.Travels.Add(travel);
+                            db.SaveChanges();
+                            UsersController usersController = new UsersController();
+                            usersController.LocalNotifyUser(Convert.ToInt32(studentDetails.user_id), notificationType, notificationDescription);
+                            int parentUserId = Convert.ToInt32(db.Parents.Where(p => p.id == studentDetails.parent_id).Select(p => p.user_id).FirstOrDefault());
+                            usersController.LocalNotifyUser(parentUserId, notificationType, studentDetails.name + " " + notificationDescription);
+                        }
+
+                        return Request.CreateResponse(HttpStatusCode.OK, apiStudent);
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.NotFound, "No Student Found!");
+                    }
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "No Student Found!");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No Journey Started!");
                 }
             }
             catch (Exception ex)

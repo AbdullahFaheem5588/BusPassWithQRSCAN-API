@@ -19,6 +19,7 @@ namespace WebApi.Models
         {
             this.IsAssigneds = new HashSet<IsAssigned>();
             this.Reaches = new HashSet<Reach>();
+            this.RouteSharings = new HashSet<RouteSharing>();
             this.RouteStops = new HashSet<RouteStop>();
             this.Starts = new HashSet<Start>();
             this.TracksLocations = new HashSet<TracksLocation>();
@@ -27,11 +28,15 @@ namespace WebApi.Models
     
         public int id { get; set; }
         public string Title { get; set; }
+        public Nullable<int> organization_id { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<IsAssigned> IsAssigneds { get; set; }
+        public virtual Organization Organization { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Reach> Reaches { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RouteSharing> RouteSharings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RouteStop> RouteStops { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

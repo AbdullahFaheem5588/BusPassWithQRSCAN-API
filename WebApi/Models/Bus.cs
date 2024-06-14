@@ -28,6 +28,7 @@ namespace WebApi.Models
         public string regno { get; set; }
         public Nullable<int> totalSeats { get; set; }
         public Nullable<int> conductor_id { get; set; }
+        public Nullable<int> organization_id { get; set; }
     
         public virtual Conductor Conductor { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -40,5 +41,6 @@ namespace WebApi.Models
         public virtual ICollection<TracksLocation> TracksLocations { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Travel> Travels { get; set; }
+        public virtual Organization Organization { get; set; }
     }
 }

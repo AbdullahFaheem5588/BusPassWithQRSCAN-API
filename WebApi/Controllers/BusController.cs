@@ -12,15 +12,15 @@ namespace WebApi.Controllers
     {
         BusPassWithQRScanEntities db = new BusPassWithQRScanEntities();
         [HttpGet]
-        public HttpResponseMessage GetBusesLocations()
+        public HttpResponseMessage GetBusesLocations(int OrganizationId)
         {
             try
             {
-                var buses = db.Buses.ToList();
+                var buses = db.Buses.Where(b => b.organization_id == OrganizationId).ToList();
                 List<BusLocation> busLocationList = new List<BusLocation>();
                 for (int i = 0; i < buses.Count; i++)
                 {
-                    var bus = buses.Skip(i).FirstOrDefault();
+                    var bus = buses[i];
                     if (bus != null)
                     {
                         int busId = bus.id;

@@ -86,6 +86,7 @@ namespace WebApi.Controllers
                     {
                         username = student.UserName,
                         password = student.Password,
+                        organization_id = student.OrganizationId,
                         role = "Student",
                     };
                     db.Users.Add(newUser);
@@ -111,9 +112,6 @@ namespace WebApi.Controllers
                         pass_id = newPass.id,
                     };
                     db.Students.Add(newStudent);
-                    db.SaveChanges();
-                    Parent exitingParent = db.Parents.Find(student.ParentId);
-                    exitingParent.childrenenroll += 1;
                     db.SaveChanges();
                     return Request.CreateResponse(HttpStatusCode.OK, "Student Inserted Successfully");
                 }
@@ -142,6 +140,7 @@ namespace WebApi.Controllers
                     {
                         username = admin.UserName,
                         password = admin.Password,
+                        organization_id = admin.OrganizationId,
                         role = "Admin",
                     };
                     db.Users.Add(newUser);
@@ -183,6 +182,7 @@ namespace WebApi.Controllers
                     {
                         username = parent.UserName,
                         password = parent.Password,
+                        organization_id = parent.OrganizationId,
                         role = "Parent",
                     };
                     db.Users.Add(newUser);
@@ -193,7 +193,6 @@ namespace WebApi.Controllers
                         name = parent.Name,
                         contact = parent.Contact,
                         user_id = newUser.id,
-                        childrenenroll = 0,
                     };
                     db.Parents.Add(newParent);
                     db.SaveChanges();
@@ -224,6 +223,7 @@ namespace WebApi.Controllers
                     {
                         username = conductor.UserName,
                         password = conductor.Password,
+                        organization_id = conductor.OrganizationId,
                         role = "Conductor",
                     };
                     db.Users.Add(newUser);
@@ -250,11 +250,11 @@ namespace WebApi.Controllers
             }
         }
         [HttpGet]
-        public HttpResponseMessage GetAllParents()
+        public HttpResponseMessage GetAllParents(int OrganizationId)
         {
             try
             {
-                var parents = db.Parents.ToList();
+                var parents = from p in db.Parents join u in db.Users on p.user_id equals u.id where u.organization_id == OrganizationId select p;
                 List<ApiParent> apiParents = new List<ApiParent>();
                 foreach (var parent in parents)
                 {
@@ -274,11 +274,11 @@ namespace WebApi.Controllers
 
         }
         [HttpGet]
-        public HttpResponseMessage GetAllConductors()
+        public HttpResponseMessage GetAllConductors(int OrganizationId)
         {
             try
             {
-                var conductors = db.Conductors.ToList();
+                var conductors = from c in db.Conductors join u in db.Users on c.user_id equals u.id where u.organization_id == OrganizationId select c;
                 List<ApiConductor> apiConductors = new List<ApiConductor>();
                 foreach (var conductor in conductors)
                 {
@@ -298,10 +298,10 @@ namespace WebApi.Controllers
 
         }
         [HttpGet]
-        public HttpResponseMessage GetUserById(int id)
+        public HttpResponseMessage GetUserById(int OrganizationId, int id)
         {
             SingleUser singleUser = new SingleUser();
-            User user = db.Users.Find(id);
+            User user = db.Users.Where(u => u.id == id && u.organization_id == OrganizationId).FirstOrDefault();
             if (user != null)
             {
                 if (user.role == "Admin")
@@ -326,7 +326,7 @@ namespace WebApi.Controllers
                     {
                         Name = parentDetails.name,
                         Contact = parentDetails.contact,
-                        ChildrenEnroll = Convert.ToInt32(parentDetails.childrenenroll),
+                        ChildrenEnroll = db.Students.Where(s => s.parent_id == parentDetails.id).Count(),
                         Id = parentDetails.id,
                         UserId = user.id,
                         UserName = user.username,
@@ -402,9 +402,9 @@ namespace WebApi.Controllers
             }
         }
         [HttpDelete]
-        public HttpResponseMessage DeleteUser(int id)
+        public HttpResponseMessage DeleteUser(int OrganizationId, int id)
         {
-            User user = db.Users.Find(id);
+            User user = db.Users.Where(u => u.id == id && u.organization_id == OrganizationId).FirstOrDefault();
             if (user != null)
             {
                 if (user.role == "Student")
@@ -474,6 +474,7 @@ namespace WebApi.Controllers
                             UserId = user.id,
                             UserName = user.username,
                             Password = user.password,
+                            OrganizationId = Convert.ToInt32(user.organization_id),
                         };
                         singleUser.Admins = admin;
                     }
@@ -484,11 +485,12 @@ namespace WebApi.Controllers
                         {
                             Name = parentDetails.name,
                             Contact = parentDetails.contact,
-                            ChildrenEnroll = Convert.ToInt32(parentDetails.childrenenroll),
+                            ChildrenEnroll = db.Students.Where(s => s.parent_id == parentDetails.id).Count(),
                             Id = parentDetails.id,
                             UserId = user.id,
                             UserName = user.username,
                             Password = user.password,
+                            OrganizationId = Convert.ToInt32(user.organization_id),
                         };
                         singleUser.Parents = parent;
                     }
@@ -507,6 +509,7 @@ namespace WebApi.Controllers
                             BusId = busDetails.id,
                             BusRegNo = busDetails.regno,
                             TotalSeats = Convert.ToInt32(busDetails.totalSeats),
+                            OrganizationId = Convert.ToInt32(user.organization_id),
                         };
                         singleUser.Conductors = conductor;
                     }
@@ -525,6 +528,7 @@ namespace WebApi.Controllers
                             Password = user.password,
                             UserName = user.username,
                             RegNo = studentDetails.regno,
+                            OrganizationId = Convert.ToInt32(user.organization_id),
                         };
                         var passDetails = db.Passes.FirstOrDefault(p => p.id == student.PassId);
                         student.PassStatus = passDetails.status;
@@ -533,6 +537,16 @@ namespace WebApi.Controllers
                         student.TotalJourneys = Convert.ToInt32(passDetails.totaljourneys);
 
                         singleUser.Students = student;
+                    }
+                    else if (user.role == "SuperAdmin")
+                    {
+                        ApiSuperAdmin superAdmin = new ApiSuperAdmin
+                        {
+                            Id = user.id,
+                            UserName = user.username,
+                            Password = user.password,
+                        };
+                        singleUser.SuperAdmin = superAdmin;
                     }
                 }
                 else
@@ -604,11 +618,11 @@ namespace WebApi.Controllers
             }
         }
         [HttpPost]
-        public HttpResponseMessage MakeAnnouncement(string Description)
+        public HttpResponseMessage MakeAnnouncement(int OrganizationId, string Description)
         {
             try
             {
-                List<User> user = db.Users.ToList();
+                List<User> user = db.Users.Where(u => u.organization_id == OrganizationId).ToList();
                 for (int i = 0; i < user.Count; i++)
                 {
                     Notification notification = new Notification();
@@ -769,10 +783,20 @@ namespace WebApi.Controllers
                 }
                 else if (userRole == "Admin")
                 {
+                    int organizationId = Convert.ToInt32(db.Users.Where(u => u.id == id).Select(u => u.organization_id).FirstOrDefault());
                     List<BusHistory> busHistory = new List<BusHistory>();
-                    var travelFromDB = db.Travels.Where(t => t.date >= fromDate && t.date <= toDate).ToList();
-                    var startsFromDB = db.Starts.Where(s => s.date >= fromDate && s.date <= toDate).ToList();
-                    var reachesFromDB = db.Reaches.Where(r => r.date >= fromDate && r.date <= toDate).ToList();
+                    var travelFromDB = db.Travels.Join(db.Students, t => t.student_id, s => s.id, (t, s) => new { Travel = t, Student = s })
+                   .Join(db.Users, ts => ts.Student.user_id, u => u.id, (ts, u) => new { ts.Travel, User = u })
+                   .Where(joined => joined.User.organization_id == 1 && joined.Travel.date >= fromDate && joined.Travel.date <= toDate)
+                   .Select(joined => joined.Travel).ToList();
+
+                    var startsFromDB = db.Starts.Join(db.Buses, s => s.bus_id, b => b.id, (s, b) => new { Starts = s, Buses = b })
+                        .Where(joined => joined.Starts.date >= fromDate && joined.Starts.date <= toDate &&
+                        joined.Buses.organization_id == organizationId).Select(joined => joined.Starts).ToList();
+
+                    var reachesFromDB = db.Reaches.Join(db.Buses, r => r.bus_id, b => b.id, (r, b) => new { Reaches = r, Buses = b })
+                        .Where(joined => joined.Reaches.date >= fromDate && joined.Reaches.date <= toDate &&
+                        joined.Buses.organization_id == organizationId).Select(joined => joined.Reaches).ToList();
                     List<ApiTravel> apiTravel = new List<ApiTravel>();
                     List<ApiStart> apiStart = new List<ApiStart>();
                     List<ApiReach> apiReaches = new List<ApiReach>();

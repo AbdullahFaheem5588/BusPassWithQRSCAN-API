@@ -31,10 +31,12 @@ namespace WebApi.Models
         public virtual DbSet<FavouriteStop> FavouriteStops { get; set; }
         public virtual DbSet<IsAssigned> IsAssigneds { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
+        public virtual DbSet<Organization> Organizations { get; set; }
         public virtual DbSet<Parent> Parents { get; set; }
         public virtual DbSet<Pass> Passes { get; set; }
         public virtual DbSet<Reach> Reaches { get; set; }
         public virtual DbSet<Route> Routes { get; set; }
+        public virtual DbSet<RouteSharing> RouteSharings { get; set; }
         public virtual DbSet<RouteStop> RouteStops { get; set; }
         public virtual DbSet<Start> Starts { get; set; }
         public virtual DbSet<Stop> Stops { get; set; }

@@ -23,6 +23,7 @@
           <Property Name="regno" Type="varchar" MaxLength="70" />
           <Property Name="totalSeats" Type="int" />
           <Property Name="conductor_id" Type="int" />
+          <Property Name="organization_id" Type="int" />
         </EntityType>
         <EntityType Name="Conductor">
           <Key>
@@ -61,6 +62,15 @@
           <Property Name="user_id" Type="int" />
           <Property Name="notificationRead" Type="int" />
         </EntityType>
+        <EntityType Name="Organizations">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="200" />
+          <Property Name="latitude" Type="varchar(max)" />
+          <Property Name="longitude" Type="varchar(max)" />
+        </EntityType>
         <EntityType Name="Parent">
           <Key>
             <PropertyRef Name="id" />
@@ -68,7 +78,6 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="100" />
           <Property Name="contact" Type="varchar" MaxLength="80" />
-          <Property Name="childrenenroll" Type="int" />
           <Property Name="user_id" Type="int" />
         </EntityType>
         <EntityType Name="Pass">
@@ -98,6 +107,17 @@
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="100" />
+          <Property Name="organization_id" Type="int" />
+        </EntityType>
+        <EntityType Name="RouteSharing">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="organization1_id" Type="int" />
+          <Property Name="organization2_id" Type="int" />
+          <Property Name="route_id" Type="int" />
         </EntityType>
         <EntityType Name="RouteStop">
           <Key>
@@ -174,6 +194,7 @@
           <Property Name="username" Type="varchar" MaxLength="100" />
           <Property Name="password" Type="varchar" MaxLength="100" />
           <Property Name="role" Type="varchar" MaxLength="50" />
+          <Property Name="organization_id" Type="int" />
         </EntityType>
         <Association Name="FK__Admin__user_id__44FF419A">
           <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
@@ -319,6 +340,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__RouteShar__organ__2BFE89A6">
+          <End Role="Organizations" Type="Self.Organizations" Multiplicity="0..1" />
+          <End Role="RouteSharing" Type="Self.RouteSharing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organizations">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="RouteSharing">
+              <PropertyRef Name="organization1_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RouteShar__organ__2CF2ADDF">
+          <End Role="Organizations" Type="Self.Organizations" Multiplicity="0..1" />
+          <End Role="RouteSharing" Type="Self.RouteSharing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organizations">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="RouteSharing">
+              <PropertyRef Name="organization2_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RouteShar__route__2DE6D218">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="RouteSharing" Type="Self.RouteSharing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="RouteSharing">
+              <PropertyRef Name="route_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__RouteStop__route__6C190EBB">
           <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
           <End Role="RouteStop" Type="Self.RouteStop" Multiplicity="*" />
@@ -487,6 +544,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Bus_Organizations">
+          <End Role="Organizations" Type="Self.Organizations" Multiplicity="0..1" />
+          <End Role="Bus" Type="Self.Bus" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organizations">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Bus">
+              <PropertyRef Name="organization_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Route_Organizations">
+          <End Role="Organizations" Type="Self.Organizations" Multiplicity="0..1" />
+          <End Role="Route" Type="Self.Route" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organizations">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Route">
+              <PropertyRef Name="organization_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Users_Organizations">
+          <End Role="Organizations" Type="Self.Organizations" Multiplicity="0..1" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organizations">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="organization_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="BusPassWithQRScanModelStoreContainer">
           <EntitySet Name="Admin" EntityType="Self.Admin" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Bus" EntityType="Self.Bus" Schema="dbo" store:Type="Tables" />
@@ -494,10 +587,12 @@
           <EntitySet Name="FavouriteStops" EntityType="Self.FavouriteStops" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="IsAssigned" EntityType="Self.IsAssigned" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Organizations" EntityType="Self.Organizations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Parent" EntityType="Self.Parent" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pass" EntityType="Self.Pass" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reaches" EntityType="Self.Reaches" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Route" EntityType="Self.Route" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RouteSharing" EntityType="Self.RouteSharing" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RouteStop" EntityType="Self.RouteStop" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Starts" EntityType="Self.Starts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Stops" EntityType="Self.Stops" Schema="dbo" store:Type="Tables" />
@@ -552,6 +647,18 @@
           <AssociationSet Name="FK__Reaches__stop_id__693CA210" Association="Self.FK__Reaches__stop_id__693CA210">
             <End Role="Stops" EntitySet="Stops" />
             <End Role="Reaches" EntitySet="Reaches" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RouteShar__organ__2BFE89A6" Association="Self.FK__RouteShar__organ__2BFE89A6">
+            <End Role="Organizations" EntitySet="Organizations" />
+            <End Role="RouteSharing" EntitySet="RouteSharing" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RouteShar__organ__2CF2ADDF" Association="Self.FK__RouteShar__organ__2CF2ADDF">
+            <End Role="Organizations" EntitySet="Organizations" />
+            <End Role="RouteSharing" EntitySet="RouteSharing" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RouteShar__route__2DE6D218" Association="Self.FK__RouteShar__route__2DE6D218">
+            <End Role="Route" EntitySet="Route" />
+            <End Role="RouteSharing" EntitySet="RouteSharing" />
           </AssociationSet>
           <AssociationSet Name="FK__RouteStop__route__6C190EBB" Association="Self.FK__RouteStop__route__6C190EBB">
             <End Role="Route" EntitySet="Route" />
@@ -609,6 +716,18 @@
             <End Role="Student" EntitySet="Student" />
             <End Role="Travels" EntitySet="Travels" />
           </AssociationSet>
+          <AssociationSet Name="FK_Bus_Organizations" Association="Self.FK_Bus_Organizations">
+            <End Role="Organizations" EntitySet="Organizations" />
+            <End Role="Bus" EntitySet="Bus" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Route_Organizations" Association="Self.FK_Route_Organizations">
+            <End Role="Organizations" EntitySet="Organizations" />
+            <End Role="Route" EntitySet="Route" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Users_Organizations" Association="Self.FK_Users_Organizations">
+            <End Role="Organizations" EntitySet="Organizations" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
@@ -634,12 +753,14 @@
           <Property Name="regno" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
           <Property Name="totalSeats" Type="Int32" />
           <Property Name="conductor_id" Type="Int32" />
+          <Property Name="organization_id" Type="Int32" />
           <NavigationProperty Name="Conductor" Relationship="Self.FK__Bus__conductor_i__5070F446" FromRole="Bus" ToRole="Conductor" />
           <NavigationProperty Name="IsAssigneds" Relationship="Self.FK__IsAssigne__bus_i__5BE2A6F2" FromRole="Bus" ToRole="IsAssigned" />
           <NavigationProperty Name="Reaches" Relationship="Self.FK__Reaches__bus_id__6754599E" FromRole="Bus" ToRole="Reaches" />
           <NavigationProperty Name="Starts" Relationship="Self.FK__Starts__bus_id__6383C8BA" FromRole="Bus" ToRole="Starts" />
           <NavigationProperty Name="TracksLocations" Relationship="Self.FK__TracksLoc__bus_i__5FB337D6" FromRole="Bus" ToRole="TracksLocation" />
           <NavigationProperty Name="Travels" Relationship="Self.FK__Travels__bus_id__571DF1D5" FromRole="Bus" ToRole="Travels" />
+          <NavigationProperty Name="Organization" Relationship="Self.FK_Bus_Organizations" FromRole="Bus" ToRole="Organizations" />
         </EntityType>
         <EntityType Name="Conductor">
           <Key>
@@ -685,6 +806,20 @@
           <Property Name="notificationRead" Type="Int32" />
           <NavigationProperty Name="User" Relationship="Self.FK__Notificat__user___47DBAE45" FromRole="Notifications" ToRole="Users" />
         </EntityType>
+        <EntityType Name="Organization">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="latitude" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="longitude" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Buses" Relationship="Self.FK_Bus_Organizations" FromRole="Organizations" ToRole="Bus" />
+          <NavigationProperty Name="RouteSharings" Relationship="Self.FK__RouteShar__organ__2BFE89A6" FromRole="Organizations" ToRole="RouteSharing" />
+          <NavigationProperty Name="RouteSharings1" Relationship="Self.FK__RouteShar__organ__2CF2ADDF" FromRole="Organizations" ToRole="RouteSharing" />
+          <NavigationProperty Name="Routes" Relationship="Self.FK_Route_Organizations" FromRole="Organizations" ToRole="Route" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_Users_Organizations" FromRole="Organizations" ToRole="Users" />
+        </EntityType>
         <EntityType Name="Parent">
           <Key>
             <PropertyRef Name="id" />
@@ -692,7 +827,6 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="contact" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
-          <Property Name="childrenenroll" Type="Int32" />
           <Property Name="user_id" Type="Int32" />
           <NavigationProperty Name="User" Relationship="Self.FK__Parent__user_id__38996AB5" FromRole="Parent" ToRole="Users" />
           <NavigationProperty Name="Students" Relationship="Self.FK__Student__parent___3E52440B" FromRole="Parent" ToRole="Student" />
@@ -729,12 +863,28 @@
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="organization_id" Type="Int32" />
           <NavigationProperty Name="IsAssigneds" Relationship="Self.FK__IsAssigne__route__5CD6CB2B" FromRole="Route" ToRole="IsAssigned" />
+          <NavigationProperty Name="Organization" Relationship="Self.FK_Route_Organizations" FromRole="Route" ToRole="Organizations" />
           <NavigationProperty Name="Reaches" Relationship="Self.FK__Reaches__route_i__68487DD7" FromRole="Route" ToRole="Reaches" />
+          <NavigationProperty Name="RouteSharings" Relationship="Self.FK__RouteShar__route__2DE6D218" FromRole="Route" ToRole="RouteSharing" />
           <NavigationProperty Name="RouteStops" Relationship="Self.FK__RouteStop__route__6C190EBB" FromRole="Route" ToRole="RouteStop" />
           <NavigationProperty Name="Starts" Relationship="Self.FK__Starts__route_id__6477ECF3" FromRole="Route" ToRole="Starts" />
           <NavigationProperty Name="TracksLocations" Relationship="Self.FK__TracksLoc__route__60A75C0F" FromRole="Route" ToRole="TracksLocation" />
           <NavigationProperty Name="Travels" Relationship="Self.FK__Travels__route_i__5812160E" FromRole="Route" ToRole="Travels" />
+        </EntityType>
+        <EntityType Name="RouteSharing">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="organization1_id" Type="Int32" />
+          <Property Name="organization2_id" Type="Int32" />
+          <Property Name="route_id" Type="Int32" />
+          <NavigationProperty Name="Organization" Relationship="Self.FK__RouteShar__organ__2BFE89A6" FromRole="RouteSharing" ToRole="Organizations" />
+          <NavigationProperty Name="Organization1" Relationship="Self.FK__RouteShar__organ__2CF2ADDF" FromRole="RouteSharing" ToRole="Organizations" />
+          <NavigationProperty Name="Route" Relationship="Self.FK__RouteShar__route__2DE6D218" FromRole="RouteSharing" ToRole="Route" />
         </EntityType>
         <EntityType Name="RouteStop">
           <Key>
@@ -831,9 +981,11 @@
           <Property Name="username" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="role" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="organization_id" Type="Int32" />
           <NavigationProperty Name="Admins" Relationship="Self.FK__Admin__user_id__44FF419A" FromRole="Users" ToRole="Admin" />
           <NavigationProperty Name="Conductors" Relationship="Self.FK__Conductor__user___4222D4EF" FromRole="Users" ToRole="Conductor" />
           <NavigationProperty Name="Notifications" Relationship="Self.FK__Notificat__user___47DBAE45" FromRole="Users" ToRole="Notifications" />
+          <NavigationProperty Name="Organization" Relationship="Self.FK_Users_Organizations" FromRole="Users" ToRole="Organizations" />
           <NavigationProperty Name="Parents" Relationship="Self.FK__Parent__user_id__38996AB5" FromRole="Users" ToRole="Parent" />
           <NavigationProperty Name="Students" Relationship="Self.FK__Student__user_id__3D5E1FD2" FromRole="Users" ToRole="Student" />
         </EntityType>
@@ -921,6 +1073,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Bus_Organizations">
+          <End Role="Organizations" Type="Self.Organization" Multiplicity="0..1" />
+          <End Role="Bus" Type="Self.Bus" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organizations">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Bus">
+              <PropertyRef Name="organization_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Conductor__user___4222D4EF">
           <End Role="Users" Type="Self.User" Multiplicity="0..1" />
           <End Role="Conductor" Type="Self.Conductor" Multiplicity="*" />
@@ -978,6 +1142,54 @@
             </Principal>
             <Dependent Role="Notifications">
               <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RouteShar__organ__2BFE89A6">
+          <End Role="Organizations" Type="Self.Organization" Multiplicity="0..1" />
+          <End Role="RouteSharing" Type="Self.RouteSharing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organizations">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="RouteSharing">
+              <PropertyRef Name="organization1_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RouteShar__organ__2CF2ADDF">
+          <End Role="Organizations" Type="Self.Organization" Multiplicity="0..1" />
+          <End Role="RouteSharing" Type="Self.RouteSharing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organizations">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="RouteSharing">
+              <PropertyRef Name="organization2_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Route_Organizations">
+          <End Role="Organizations" Type="Self.Organization" Multiplicity="0..1" />
+          <End Role="Route" Type="Self.Route" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organizations">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Route">
+              <PropertyRef Name="organization_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Users_Organizations">
+          <End Role="Organizations" Type="Self.Organization" Multiplicity="0..1" />
+          <End Role="Users" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Organizations">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="organization_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1050,6 +1262,18 @@
             </Principal>
             <Dependent Role="Reaches">
               <PropertyRef Name="stop_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RouteShar__route__2DE6D218">
+          <End Role="Route" Type="Self.Route" Multiplicity="0..1" />
+          <End Role="RouteSharing" Type="Self.RouteSharing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Route">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="RouteSharing">
+              <PropertyRef Name="route_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1156,10 +1380,12 @@
           <EntitySet Name="FavouriteStops" EntityType="Self.FavouriteStop" />
           <EntitySet Name="IsAssigneds" EntityType="Self.IsAssigned" />
           <EntitySet Name="Notifications" EntityType="Self.Notification" />
+          <EntitySet Name="Organizations" EntityType="Self.Organization" />
           <EntitySet Name="Parents" EntityType="Self.Parent" />
           <EntitySet Name="Passes" EntityType="Self.Pass" />
           <EntitySet Name="Reaches" EntityType="Self.Reach" />
           <EntitySet Name="Routes" EntityType="Self.Route" />
+          <EntitySet Name="RouteSharings" EntityType="Self.RouteSharing" />
           <EntitySet Name="RouteStops" EntityType="Self.RouteStop" />
           <EntitySet Name="Starts" EntityType="Self.Start" />
           <EntitySet Name="Stops" EntityType="Self.Stop" />
@@ -1195,6 +1421,10 @@
             <End Role="Bus" EntitySet="Buses" />
             <End Role="Travels" EntitySet="Travels" />
           </AssociationSet>
+          <AssociationSet Name="FK_Bus_Organizations" Association="Self.FK_Bus_Organizations">
+            <End Role="Organizations" EntitySet="Organizations" />
+            <End Role="Bus" EntitySet="Buses" />
+          </AssociationSet>
           <AssociationSet Name="FK__Conductor__user___4222D4EF" Association="Self.FK__Conductor__user___4222D4EF">
             <End Role="Users" EntitySet="Users" />
             <End Role="Conductor" EntitySet="Conductors" />
@@ -1214,6 +1444,22 @@
           <AssociationSet Name="FK__Notificat__user___47DBAE45" Association="Self.FK__Notificat__user___47DBAE45">
             <End Role="Users" EntitySet="Users" />
             <End Role="Notifications" EntitySet="Notifications" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RouteShar__organ__2BFE89A6" Association="Self.FK__RouteShar__organ__2BFE89A6">
+            <End Role="Organizations" EntitySet="Organizations" />
+            <End Role="RouteSharing" EntitySet="RouteSharings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RouteShar__organ__2CF2ADDF" Association="Self.FK__RouteShar__organ__2CF2ADDF">
+            <End Role="Organizations" EntitySet="Organizations" />
+            <End Role="RouteSharing" EntitySet="RouteSharings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Route_Organizations" Association="Self.FK_Route_Organizations">
+            <End Role="Organizations" EntitySet="Organizations" />
+            <End Role="Route" EntitySet="Routes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Users_Organizations" Association="Self.FK_Users_Organizations">
+            <End Role="Organizations" EntitySet="Organizations" />
+            <End Role="Users" EntitySet="Users" />
           </AssociationSet>
           <AssociationSet Name="FK__Parent__user_id__38996AB5" Association="Self.FK__Parent__user_id__38996AB5">
             <End Role="Users" EntitySet="Users" />
@@ -1238,6 +1484,10 @@
           <AssociationSet Name="FK__Reaches__stop_id__693CA210" Association="Self.FK__Reaches__stop_id__693CA210">
             <End Role="Stops" EntitySet="Stops" />
             <End Role="Reaches" EntitySet="Reaches" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RouteShar__route__2DE6D218" Association="Self.FK__RouteShar__route__2DE6D218">
+            <End Role="Route" EntitySet="Routes" />
+            <End Role="RouteSharing" EntitySet="RouteSharings" />
           </AssociationSet>
           <AssociationSet Name="FK__RouteStop__route__6C190EBB" Association="Self.FK__RouteStop__route__6C190EBB">
             <End Role="Route" EntitySet="Routes" />
@@ -1296,6 +1546,7 @@
                 <ScalarProperty Name="regno" ColumnName="regno" />
                 <ScalarProperty Name="totalSeats" ColumnName="totalSeats" />
                 <ScalarProperty Name="conductor_id" ColumnName="conductor_id" />
+                <ScalarProperty Name="organization_id" ColumnName="organization_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1340,13 +1591,22 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Organizations">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.Organization">
+              <MappingFragment StoreEntitySet="Organizations">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="latitude" ColumnName="latitude" />
+                <ScalarProperty Name="longitude" ColumnName="longitude" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Parents">
             <EntityTypeMapping TypeName="BusPassWithQRScanModel.Parent">
               <MappingFragment StoreEntitySet="Parent">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="contact" ColumnName="contact" />
-                <ScalarProperty Name="childrenenroll" ColumnName="childrenenroll" />
                 <ScalarProperty Name="user_id" ColumnName="user_id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1379,6 +1639,18 @@
               <MappingFragment StoreEntitySet="Route">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="organization_id" ColumnName="organization_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RouteSharings">
+            <EntityTypeMapping TypeName="BusPassWithQRScanModel.RouteSharing">
+              <MappingFragment StoreEntitySet="RouteSharing">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="organization1_id" ColumnName="organization1_id" />
+                <ScalarProperty Name="organization2_id" ColumnName="organization2_id" />
+                <ScalarProperty Name="route_id" ColumnName="route_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1462,6 +1734,7 @@
                 <ScalarProperty Name="username" ColumnName="username" />
                 <ScalarProperty Name="password" ColumnName="password" />
                 <ScalarProperty Name="role" ColumnName="role" />
+                <ScalarProperty Name="organization_id" ColumnName="organization_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
