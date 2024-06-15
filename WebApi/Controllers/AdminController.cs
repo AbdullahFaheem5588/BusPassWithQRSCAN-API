@@ -213,13 +213,13 @@ namespace WebApi.Controllers
             }
         }
         [HttpGet]
-        public HttpResponseMessage Search(int id, string category)
+        public HttpResponseMessage Search(int id, string category, int OrganizationId)
         {
             try
             {
                 if (category == "Student")
                 {
-                    var studentDetails = db.Students.Where(s => s.pass_id == id).FirstOrDefault();
+                    var studentDetails = (from s in db.Students join u in db.Users on s.user_id equals u.id where (s.pass_id == id && u.organization_id == OrganizationId) select s).FirstOrDefault();
                     if (studentDetails != null)
                     {
                         ApiStudent apiStudent = new ApiStudent
@@ -240,7 +240,7 @@ namespace WebApi.Controllers
                 }
                 else if (category == "Parent")
                 {
-                    var parentDetails = db.Parents.Find(id);
+                    var parentDetails = (from p in db.Parents join u in db.Users on p.user_id equals u.id where (p.id == id && u.organization_id == OrganizationId) select p).FirstOrDefault();
                     if (parentDetails != null)
                     {
                         ApiParent apiParent = new ApiParent { Id = parentDetails.id, Name = parentDetails.name, Contact = parentDetails.contact };
@@ -253,7 +253,7 @@ namespace WebApi.Controllers
                 }
                 else if (category == "Conductor")
                 {
-                    var conductorDetails = db.Conductors.Find(id);
+                    var conductorDetails = (from c in db.Conductors join u in db.Users on c.user_id equals u.id where (c.id == id && u.organization_id == OrganizationId) select c).FirstOrDefault();
                     if (conductorDetails != null)
                     {
                         ApiConductor apiConductor = new ApiConductor { Id = conductorDetails.id, Name = conductorDetails.name, Contact = conductorDetails.contact };
@@ -266,7 +266,7 @@ namespace WebApi.Controllers
                 }
                 else if (category == "Bus")
                 {
-                    var bus = db.Buses.Find(id);
+                    var bus = db.Buses.Where(b => b.id == id && b.organization_id == OrganizationId).FirstOrDefault();
                     if (bus != null)
                     {
                         var conductor = db.Conductors.Find(bus.conductor_id);
@@ -322,7 +322,7 @@ namespace WebApi.Controllers
                 }
                 else if (category == "Route")
                 {
-                    var route = db.Routes.Find(id);
+                    var route = db.Routes.Where(r => r.id == id && r.organization_id == OrganizationId).FirstOrDefault();
                     if (route != null)
                     {
                         var stops = (from s in db.Stops

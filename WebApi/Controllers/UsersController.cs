@@ -457,6 +457,12 @@ namespace WebApi.Controllers
             updatePassStatus();
             SingleUser singleUser = new SingleUser();
             User user = db.Users.FirstOrDefault(u => u.username == username);
+            var Organization = db.Organizations.Where(o => o.id == user.organization_id).FirstOrDefault();
+            Location OrganizationCords = new Location
+            {
+                latitude = Convert.ToDouble(Organization.latitude),
+                longitude = Convert.ToDouble(Organization.longitude),
+            };
             if (user != null)
             {
                 if (user.password == password)
@@ -475,6 +481,8 @@ namespace WebApi.Controllers
                             UserName = user.username,
                             Password = user.password,
                             OrganizationId = Convert.ToInt32(user.organization_id),
+                            OrganizationCords = OrganizationCords,
+                            OrganizationName = Organization.name,
                         };
                         singleUser.Admins = admin;
                     }
@@ -491,6 +499,8 @@ namespace WebApi.Controllers
                             UserName = user.username,
                             Password = user.password,
                             OrganizationId = Convert.ToInt32(user.organization_id),
+                            OrganizationCords = OrganizationCords,
+                            OrganizationName = Organization.name,
                         };
                         singleUser.Parents = parent;
                     }
@@ -510,6 +520,8 @@ namespace WebApi.Controllers
                             BusRegNo = busDetails.regno,
                             TotalSeats = Convert.ToInt32(busDetails.totalSeats),
                             OrganizationId = Convert.ToInt32(user.organization_id),
+                            OrganizationCords = OrganizationCords,
+                            OrganizationName = Organization.name,
                         };
                         singleUser.Conductors = conductor;
                     }
@@ -529,6 +541,8 @@ namespace WebApi.Controllers
                             UserName = user.username,
                             RegNo = studentDetails.regno,
                             OrganizationId = Convert.ToInt32(user.organization_id),
+                            OrganizationCords = OrganizationCords,
+                            OrganizationName = Organization.name,
                         };
                         var passDetails = db.Passes.FirstOrDefault(p => p.id == student.PassId);
                         student.PassStatus = passDetails.status;

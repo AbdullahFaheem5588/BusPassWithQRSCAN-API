@@ -22,6 +22,8 @@ namespace WebApi.Models
         public int OrganizationId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
+        public Location OrganizationCords { get; set; }
+        public string OrganizationName { get; set; }
     }
     public class ApiConductor
     {
@@ -35,6 +37,8 @@ namespace WebApi.Models
         public int BusId { get; set; }
         public string BusRegNo { get; set; }
         public int TotalSeats { get; set; }
+        public Location OrganizationCords { get; set; }
+        public string OrganizationName { get; set; }
     }
     public class ApiParent
     {
@@ -46,6 +50,8 @@ namespace WebApi.Models
         public int OrganizationId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
+        public Location OrganizationCords { get; set; }
+        public string OrganizationName { get; set; }
     }
     public class ApiStudent
     {
@@ -64,6 +70,8 @@ namespace WebApi.Models
         public int UserId { get; set; }
         public int OrganizationId { get; set; }
         public int PassId { get; set; }
+        public Location OrganizationCords { get; set; }
+        public string OrganizationName { get; set; }
     }
     public class ApiSuperAdmin
     {
