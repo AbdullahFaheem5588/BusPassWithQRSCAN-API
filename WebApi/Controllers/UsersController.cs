@@ -113,6 +113,12 @@ namespace WebApi.Controllers
                     };
                     db.Students.Add(newStudent);
                     db.SaveChanges();
+                    var admins = db.Users.Where(u => u.organization_id == student.OrganizationId && u.role == "Admin").Select(u => u.id).ToList();
+                    for (int i = 0; i < admins.Count; i++)
+                    {
+                        string discription = "Username: " + newUser.username + "\nPassword: " + newUser.password;
+                        LocalNotifyUser(admins[i], "New User Added!", discription);
+                    }
                     return Request.CreateResponse(HttpStatusCode.OK, "Student Inserted Successfully");
                 }
                 else
@@ -155,6 +161,17 @@ namespace WebApi.Controllers
                     };
                     db.Admins.Add(newAdmin);
                     db.SaveChanges();
+                    var admins = db.Users.Where(u => u.organization_id == admin.OrganizationId && u.role == "Admin").Select(u => u.id).ToList();
+                    string discription = "Username: " + newUser.username + "\nPassword: " + newUser.password;
+                    for (int i = 0; i < admins.Count; i++)
+                    {
+                        LocalNotifyUser(admins[i], "New User Added!", discription);
+                    }
+                    if (admins.Count == 1)
+                    {
+                        var id = db.Users.Where(u => u.role == "SuperAdmin").Select(u => u.id).FirstOrDefault();
+                        LocalNotifyUser(id, "New User Added!", discription);
+                    }
                     return Request.CreateResponse(HttpStatusCode.OK, "Admin Inserted Successfully");
                 }
                 else
@@ -196,6 +213,12 @@ namespace WebApi.Controllers
                     };
                     db.Parents.Add(newParent);
                     db.SaveChanges();
+                    var admins = db.Users.Where(u => u.organization_id == parent.OrganizationId && u.role == "Admin").Select(u => u.id).ToList();
+                    for (int i = 0; i < admins.Count; i++)
+                    {
+                        string discription = "Username: " + newUser.username + "\nPassword: " + newUser.password;
+                        LocalNotifyUser(admins[i], "New User Added!", discription);
+                    }
                     return Request.CreateResponse(HttpStatusCode.OK, newParent.id);
                 }
                 else
@@ -237,6 +260,12 @@ namespace WebApi.Controllers
                     };
                     db.Conductors.Add(newConductor);
                     db.SaveChanges();
+                    var admins = db.Users.Where(u => u.organization_id == conductor.OrganizationId && u.role == "Admin").Select(u => u.id).ToList();
+                    for (int i = 0; i < admins.Count; i++)
+                    {
+                        string discription = "Username: " + newUser.username + "\nPassword: " + newUser.password;
+                        LocalNotifyUser(admins[i], "New User Added!", discription);
+                    }
                     return Request.CreateResponse(HttpStatusCode.OK, newConductor.id);
                 }
                 else
@@ -457,14 +486,19 @@ namespace WebApi.Controllers
             updatePassStatus();
             SingleUser singleUser = new SingleUser();
             User user = db.Users.FirstOrDefault(u => u.username == username);
-            var Organization = db.Organizations.Where(o => o.id == user.organization_id).FirstOrDefault();
-            Location OrganizationCords = new Location
-            {
-                latitude = Convert.ToDouble(Organization.latitude),
-                longitude = Convert.ToDouble(Organization.longitude),
-            };
+            Organization Organization = new Organization();
+            Location OrganizationCords = new Location();
             if (user != null)
             {
+                if (user.role != "SuperAdmin")
+                {
+                    Organization = db.Organizations.Where(o => o.id == user.organization_id).FirstOrDefault();
+                    OrganizationCords = new Location
+                    {
+                        latitude = Convert.ToDouble(Organization.latitude),
+                        longitude = Convert.ToDouble(Organization.longitude),
+                    };
+                }
                 if (user.password == password)
                 {
                     singleUser.userRole = user.role;
@@ -556,9 +590,9 @@ namespace WebApi.Controllers
                     {
                         ApiSuperAdmin superAdmin = new ApiSuperAdmin
                         {
-                            Id = user.id,
                             UserName = user.username,
                             Password = user.password,
+                            UserId = user.id,
                         };
                         singleUser.SuperAdmin = superAdmin;
                     }

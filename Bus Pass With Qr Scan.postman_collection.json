@@ -1,0 +1,1560 @@
+{
+	"info": {
+		"_postman_id": "5f44a5d3-30a3-431c-a8e4-ca8196c7554d",
+		"name": "Bus Pass With Qr Scan",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32014475",
+		"_collection_link": "https://buspasswithqrscanteam.postman.co/workspace/My-Workspace~2b2aaee9-f476-4159-8ed6-cac5f8e1c78b/collection/32014475-5f44a5d3-30a3-431c-a8e4-ca8196c7554d?action=share&source=collection_link&creator=32014475"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Insert Student",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"Name\": \"Ahsan Yaseen\",\r\n  \"Gender\": \"Male\",\r\n  \"RegNo\": \"2020-Arid-1234\",\r\n  \"Contact\": \"03311234567\",\r\n  \"Password\": \"123\",\r\n  \"PassExpiry\": \"2024-01-15\",\r\n  \"TotalJourneys\": 50,\r\n  \"ParentId\": 1,\r\n  \"OrganizationId\" : 1\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/InsertStudent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"InsertStudent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Insert Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"Name\": \"Dr Naseer Ahmed\",\r\n  \"Gender\": \"Male\",\r\n  \"Contact\": \"11111111111\",\r\n  \"Password\": \"DrNaseerAhmed123\",\r\n  \"OrganizationId\" : 1,\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/InsertAdmin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"InsertAdmin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Insert Parent",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"Name\": \"M Akram\",\r\n  \"Contact\": \"12345678910\",\r\n  \"Password\": \"MAkram123\",\r\n  \"OrganizationId\" : 1,\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/InsertParent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"InsertParent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Insert Conductor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"Name\": \"ali\",\r\n  \"Contact\": \"12345678910\",\r\n  \"Password\": \"123\",\r\n  \"OrganizationId\" : 1,\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/InsertConductor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"InsertConductor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllParents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/GetAllParents?OrganizationId=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"GetAllParents"
+							],
+							"query": [
+								{
+									"key": "OrganizationId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllConductors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/GetAllConductors?OrganizationId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"GetAllConductors"
+							],
+							"query": [
+								{
+									"key": "OrganizationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/GetUserById?OrganizationId=1&id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"GetUserById"
+							],
+							"query": [
+								{
+									"key": "OrganizationId",
+									"value": "1"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ChangePassword",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 3,\r\n  \"oldPassword\": \"123\",\r\n  \"newPassword\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/ChangePassword",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"ChangePassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/DeleteUser?id=40&OrganizationId=9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"DeleteUser"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "40"
+								},
+								{
+									"key": "OrganizationId",
+									"value": "9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/Login?username=Admin&password=123",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"Login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "Admin"
+								},
+								{
+									"key": "password",
+									"value": "123"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/GetUserNotification?id=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"GetUserNotification"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Notify User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/NotifyUser?userId=3&Type=student_verified&Descriptions=Student Verified.",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"NotifyUser"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "3"
+								},
+								{
+									"key": "Type",
+									"value": "student_verified"
+								},
+								{
+									"key": "Descriptions",
+									"value": "Student Verified."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MakeAnnouncement",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/MakeAnnouncement?Description=Announcement Made&OrganizationId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"MakeAnnouncement"
+							],
+							"query": [
+								{
+									"key": "Description",
+									"value": "Announcement Made"
+								},
+								{
+									"key": "OrganizationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUserHistory",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/GetUserHistory?id=4&fDate=2024-01-01&tDate=2024-06-16",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"GetUserHistory"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "4"
+								},
+								{
+									"key": "fDate",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "tDate",
+									"value": "2024-06-16"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MarkNotificationAsRead",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/MarkNotificationAsRead?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"MarkNotificationAsRead"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MarkAllNotificationAsRead",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Users/MarkAllNotificationAsRead?userId=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Users",
+								"MarkAllNotificationAsRead"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Student",
+			"item": [
+				{
+					"name": "Get Fav Stops",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Student/GetFavStops?id=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Student",
+								"GetFavStops"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Fav Stop",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Student/RemoveFavStop?studentId=2&stopId=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Student",
+								"RemoveFavStop"
+							],
+							"query": [
+								{
+									"key": "studentId",
+									"value": "2"
+								},
+								{
+									"key": "stopId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Fav Stop",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Student/AddFavStop?studentId=2&stopId=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Student",
+								"AddFavStop"
+							],
+							"query": [
+								{
+									"key": "studentId",
+									"value": "2"
+								},
+								{
+									"key": "stopId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stops",
+			"item": [
+				{
+					"name": "GetAllRoutes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Stops/GetAllRoutes?OrganizationId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Stops",
+								"GetAllRoutes"
+							],
+							"query": [
+								{
+									"key": "OrganizationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllStops",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Stops/GetAllStops",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Stops",
+								"GetAllStops"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllRoutesTitle",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Stops/GetAllRoutesTitle?OrganizationId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Stops",
+								"GetAllRoutesTitle"
+							],
+							"query": [
+								{
+									"key": "OrganizationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Parent",
+			"item": [
+				{
+					"name": "Get Children",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Parent/GetChildren?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Parent",
+								"GetChildren"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Child Location",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Parent/GetChildLocation?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Parent",
+								"GetChildLocation"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Conductor",
+			"item": [
+				{
+					"name": "GetNextStop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Conductor/GetNextStop/?conductorId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Conductor",
+								"GetNextStop",
+								""
+							],
+							"query": [
+								{
+									"key": "conductorId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetBookedSeats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Conductor/GetBookedSeats/?conductorId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Conductor",
+								"GetBookedSeats",
+								""
+							],
+							"query": [
+								{
+									"key": "conductorId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetRemainingStops",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Conductor/GetRemainingStops?conductorId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Conductor",
+								"GetRemainingStops"
+							],
+							"query": [
+								{
+									"key": "conductorId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAssignedRoutes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Conductor/GetAssignedRoutes/?conductorId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Conductor",
+								"GetAssignedRoutes",
+								""
+							],
+							"query": [
+								{
+									"key": "conductorId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "IsJourneyCompleted",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Conductor/IsJourneyCompleted/?conductorId=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Conductor",
+								"IsJourneyCompleted",
+								""
+							],
+							"query": [
+								{
+									"key": "conductorId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetStartedRoute",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Conductor/GetStartedRoute/?conductorId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Conductor",
+								"GetStartedRoute",
+								""
+							],
+							"query": [
+								{
+									"key": "conductorId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "StartJourney",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Conductor/StartJourney/?busId=1&routeId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Conductor",
+								"StartJourney",
+								""
+							],
+							"query": [
+								{
+									"key": "busId",
+									"value": "1"
+								},
+								{
+									"key": "routeId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ReachedAtStop",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Conductor/ReachedAtStop/?busId=1&routeId=1&stopId=0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Conductor",
+								"ReachedAtStop",
+								""
+							],
+							"query": [
+								{
+									"key": "busId",
+									"value": "1"
+								},
+								{
+									"key": "routeId",
+									"value": "1"
+								},
+								{
+									"key": "stopId",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateBusLocation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"BusId\" : 2,\r\n    \"RouteId\" : 2,\r\n    \"Cords\" : {\r\n        \"latitude\" : 33.63144661308811,\r\n        \"longitude\" : 73.07256006432084,\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Conductor/UpdateBusLocation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Conductor",
+								"UpdateBusLocation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ScanQrCode",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Conductor/ScanQrCode?passId=2&busId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Conductor",
+								"ScanQrCode"
+							],
+							"query": [
+								{
+									"key": "passId",
+									"value": "2"
+								},
+								{
+									"key": "busId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "GetBusDetails",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/GetBusDetails?OrganizationId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"GetBusDetails"
+							],
+							"query": [
+								{
+									"key": "OrganizationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "InsertStop",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Banni\",\r\n    \"latitude\" : \"111111\",\r\n    \"longitude\" : \"1111111\",\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/InsertStop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"InsertStop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "InsertRoute",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrganizationId\" : 1,\r\n    \"RouteTitle\" : \"Test\",\r\n    \"Stops\" : [\r\n        {\r\n            \"Id\" : 1\r\n        },\r\n        {\r\n            \"Id\" : 2 \r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/InsertRoute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"InsertRoute"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RechargeJourneys",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/RechargeJourneys?passId=2&noOfJourneys=1&passExpiry=2025-05-20",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"RechargeJourneys"
+							],
+							"query": [
+								{
+									"key": "passId",
+									"value": "2"
+								},
+								{
+									"key": "noOfJourneys",
+									"value": "1"
+								},
+								{
+									"key": "passExpiry",
+									"value": "2025-05-20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ValidatePass",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/ValidatePass?passId=2&adminOrganizationId=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"ValidatePass"
+							],
+							"query": [
+								{
+									"key": "passId",
+									"value": "2"
+								},
+								{
+									"key": "adminOrganizationId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "InsertBus",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrganizationId\" :1,\r\n    \"RegNo\" : \"LWR 3213\",\r\n    \"TotalSeats\" : 60,\r\n    \"Conductor\" : {\r\n        \"Id\" : 1\r\n    },\r\n    \"Routes\" : [\r\n        {\r\n            \"RouteId\": 1,\r\n        },\r\n        {\r\n            \"RouteId\" : 2,\r\n        }\r\n    ]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/InsertBus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"InsertBus"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/Search?id=2&category=Student&OrganizationId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"Search"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								},
+								{
+									"key": "category",
+									"value": "Student"
+								},
+								{
+									"key": "OrganizationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateStudent",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PassId\" : 2,\r\n    \"Name\": \"Hamid Basar Wahab\",\r\n    \"RegNo\": \"2020-Arid-3634\",\r\n    \"Contact\": \"03478282374\",\r\n    \"PassStatus\": \"Active\",\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/UpdateStudent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"UpdateStudent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateParent",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Id\": 1,\r\n    \"Name\": \"Noor ul Basar\",\r\n    \"Contact\": \"03319357470\",\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/UpdateParent",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"UpdateParent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateConductor",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Id\": 1,\r\n    \"Name\": \"Ahmed Shehbaz\",\r\n    \"Contact\": \"03112233671\",\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/UpdateConductor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"UpdateConductor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateBus",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Id\": 1,\r\n    \"RegNo\": \"RWP-1234\",\r\n    \"TotalSeats\": 60,\r\n    \"Conductor\": {\r\n        \"Id\": 1,\r\n    },\r\n    \"Routes\": [\r\n        {\r\n            \"RouteId\": 1,\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/UpdateBus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"UpdateBus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateStop",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Id\": 1,\r\n    \"Name\": \"Chandni Chowk\",\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/UpdateStop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"UpdateStop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateRoute",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RouteId\": 1,\r\n    \"RouteTitle\": \"Chadni Chowk - Saddar (8:30)\",\r\n    \"Stops\": [\r\n        {\r\n            \"Id\": 1,\r\n        },\r\n        {\r\n            \"Id\": 3,\r\n        },\r\n        {\r\n            \"Id\": 2,\r\n        },\r\n        {\r\n            \"Id\": 4,\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/UpdateRoute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"UpdateRoute"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bus",
+			"item": [
+				{
+					"name": "GetBusesLocations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Bus/GetBusesLocations?OrganizationId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Bus",
+								"GetBusesLocations"
+							],
+							"query": [
+								{
+									"key": "OrganizationId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Super Admin",
+			"item": [
+				{
+					"name": "GetAllOrganizationDetails",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/SuperAdmin/GetAllOrganizationDetails",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"SuperAdmin",
+								"GetAllOrganizationDetails"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllOrganizations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/SuperAdmin/GetAllOrganizations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"SuperAdmin",
+								"GetAllOrganizations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "InsertOrganization",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"ARID\",\r\n    \"Cords\" : {\r\n        \"latitude\" : 11111111,\r\n        \"longitude\" : 1111\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost/WebApi/api/SuperAdmin/InsertOrganization",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"SuperAdmin",
+								"InsertOrganization"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

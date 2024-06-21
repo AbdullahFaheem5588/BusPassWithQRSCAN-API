@@ -150,6 +150,8 @@ Select * from Starts
 Select * from Stops
 Select * from Travels
 Select * from TracksLocation
+Select * from Organizations
+Select * from RouteSharing
 
 delete from IsAssigned where id > 8
 delete from bus where id > 6
@@ -175,7 +177,7 @@ delete from Notifications where id > 18485
 delete from TracksLocation where id > 2129
 delete from Starts where id > 72
 delete from Travels where id > 27
-
+delete from Organizations where id > 25
 
 SELECT u.id
 FROM Users u

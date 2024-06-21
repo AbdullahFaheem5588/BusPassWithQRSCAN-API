@@ -168,6 +168,7 @@
     <Compile Include="Controllers\ParentController.cs" />
     <Compile Include="Controllers\StopsController.cs" />
     <Compile Include="Controllers\StudentController.cs" />
+    <Compile Include="Controllers\SuperAdminController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

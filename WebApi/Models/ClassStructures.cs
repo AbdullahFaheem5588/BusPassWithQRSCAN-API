@@ -75,9 +75,15 @@ namespace WebApi.Models
     }
     public class ApiSuperAdmin
     {
-        public int Id { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
+        public int UserId { get; set; }
+    }
+    public class ApiOrganization
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public Location Cords { get; set; }
     }
     public class ChildTimings
     {
@@ -201,5 +207,21 @@ namespace WebApi.Models
         public ApiConductor Conductor { get; set; }
         public List<Routes> Routes { get; set; }
 
+    }
+    public class OrganizationsDetails
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int TotalUsers { get; set; }
+        public int TotalStudents { get; set; }
+        public int TotalParents { get; set; }
+        public int TotalConductors { get; set; }
+        public int TotalAdmins { get; set; }
+
+    }
+    public class SuperAdminDashboardData
+    {
+        public int TotalUsers { get; set; }
+        public List<OrganizationsDetails> Organizations { get; set; }
     }
 }
