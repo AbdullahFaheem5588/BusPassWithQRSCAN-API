@@ -525,5 +525,103 @@ namespace WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+        [HttpGet]
+        public HttpResponseMessage GetSharedRoutesRecord(int OrganizationId)
+        {
+            try
+            {
+                var sharedRoutes = db.RouteSharings.Where(rs => rs.organization1_id == OrganizationId || rs.organization2_id == OrganizationId).ToList();
+                List<ApiSharedRoutes> apiSharedRoutes = new List<ApiSharedRoutes>();
+                for (int i = 0; i < sharedRoutes.Count; i++)
+                {
+                    int org1_Id = Convert.ToInt16(sharedRoutes[i].organization1_id);
+                    int org2_Id = Convert.ToInt16(sharedRoutes[i].organization2_id);
+                    int route_Id = Convert.ToInt16(sharedRoutes[i].route_id);
+                    string ownedBy = db.Organizations.Where(o => o.id == org1_Id).Select(o => o.name).FirstOrDefault();
+                    string requestedBy = db.Organizations.Where(o => o.id == org2_Id).Select(o => o.name).FirstOrDefault();
+                    bool requestedByUser = true;
+                    if (OrganizationId == org1_Id)
+                    {
+                        requestedByUser = false;
+                    }
+                    apiSharedRoutes.Add(new ApiSharedRoutes
+                    {
+                        Id = sharedRoutes[i].id,
+                        RouteTitle = db.Routes.Where(r => r.id == route_Id).Select(r => r.Title).FirstOrDefault(),
+                        Status = sharedRoutes[i].Status,
+                        RequestedByUser = requestedByUser,
+                        Description = "Owned By: " + ownedBy + "\nRequested By: " + requestedBy + "\nRouteNo: " + route_Id + "\nTotal Stops: " + db.RouteStops.Where(rs => rs.route_id == route_Id).Count(),
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, apiSharedRoutes);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        [HttpPut]
+        public HttpResponseMessage UpdateRequestStatus(int Id, string Status)
+        {
+            try
+            {
+                var request = db.RouteSharings.Find(Id);
+                if (request != null)
+                {
+                    request.Status = Status;
+                    db.SaveChanges();
+                    var admins = (from a in db.Admins join u in db.Users on a.user_id equals u.id where u.organization_id == request.organization2_id select a.user_id).ToList();
+                    UsersController usersController = new UsersController();
+                    for (int i = 0; i < admins.Count; i++)
+                    {
+                        usersController.LocalNotifyUser(Convert.ToInt32(admins[i]), "Route Sharing Request!", "Your Route Sharing Request on Route # " + request.route_id + " has been " + Status);
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, "Request " + Status + "!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, "No Such Request Found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        [HttpPost]
+        public HttpResponseMessage SendRouteSharingRequest(int RouteId, int OrganizationId)
+        {
+            try
+            {
+                var route = db.Routes.Find(RouteId);
+                if (route != null)
+                {
+                    RouteSharing routeSharing = new RouteSharing
+                    {
+                        organization1_id = route.organization_id,
+                        organization2_id = OrganizationId,
+                        route_id = route.id,
+                        Status = "Pending",
+                    };
+                    db.RouteSharings.Add(routeSharing);
+                    db.SaveChanges();
+                    var admins = (from a in db.Admins join u in db.Users on a.user_id equals u.id where u.organization_id == route.organization_id select a.user_id).ToList();
+                    UsersController usersController = new UsersController();
+                    for (int i = 0; i < admins.Count; i++)
+                    {
+                        usersController.LocalNotifyUser(Convert.ToInt32(admins[i]), "Route Sharing Request!", db.Organizations.Where(o => o.id == OrganizationId).Select(o => o.name).FirstOrDefault() + " has requwsted you to Share your Route No: " + route.id + " with them.");
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, "Request Sent!");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, "No Such Route Found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
     }
 }

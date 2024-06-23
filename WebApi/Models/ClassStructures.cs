@@ -224,4 +224,12 @@ namespace WebApi.Models
         public int TotalUsers { get; set; }
         public List<OrganizationsDetails> Organizations { get; set; }
     }
+    public class ApiSharedRoutes
+    {
+        public int Id { get; set; }
+        public string RouteTitle { get; set; }
+        public string Description { get; set; }
+        public string Status { get; set; }
+        public bool RequestedByUser { get; set; }
+    }
 }

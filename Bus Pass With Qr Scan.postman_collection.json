@@ -674,6 +674,33 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetAvailableRoutes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Stops/GetAvailableRoutes?OrganizationId=20",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Stops",
+								"GetAvailableRoutes"
+							],
+							"query": [
+								{
+									"key": "OrganizationId",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -981,7 +1008,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"BusId\" : 2,\r\n    \"RouteId\" : 2,\r\n    \"Cords\" : {\r\n        \"latitude\" : 33.63144661308811,\r\n        \"longitude\" : 73.07256006432084,\r\n    }\r\n}",
+							"raw": "{\r\n    \"BusId\" : 1,\r\n    \"RouteId\" : 1,\r\n    \"Cords\" : {\r\n        \"latitude\" : 33.63144661308811,\r\n        \"longitude\" : 73.07256006432084,\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1440,6 +1467,95 @@
 								"api",
 								"Admin",
 								"UpdateRoute"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetSharedRoutesRecord",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/GetSharedRoutesRecord?OrganizationId=23",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"GetSharedRoutesRecord"
+							],
+							"query": [
+								{
+									"key": "OrganizationId",
+									"value": "23"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateRequestStatus",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/UpdateRequestStatus?Id=1&Status=Accepted",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"UpdateRequestStatus"
+							],
+							"query": [
+								{
+									"key": "Id",
+									"value": "1"
+								},
+								{
+									"key": "Status",
+									"value": "Accepted"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SendRouteSharingRequest",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost/WebApi/api/Admin/SendRouteSharingRequest?RouteId=2&OrganizationId=23",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"WebApi",
+								"api",
+								"Admin",
+								"SendRouteSharingRequest"
+							],
+							"query": [
+								{
+									"key": "RouteId",
+									"value": "2"
+								},
+								{
+									"key": "OrganizationId",
+									"value": "23"
+								}
 							]
 						}
 					},

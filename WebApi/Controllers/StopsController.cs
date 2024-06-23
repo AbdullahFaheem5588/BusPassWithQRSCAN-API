@@ -121,5 +121,52 @@ namespace WebApi.Controllers
             }
 
         }
+        [HttpGet]
+        public HttpResponseMessage GetAvailableRoutes(int OrganizationId)
+        {
+            try
+            {
+                var routes = db.Routes.Where(r => r.organization_id != OrganizationId).ToList();
+                var alreadySharedRoutes = db.RouteSharings.Where(rs => rs.organization2_id == OrganizationId && (rs.Status == "Accepted" || rs.Status == "Pending")).Select(rs => rs.route_id).ToList();
+                var stops = db.Stops.ToList();
+                var routeStop = db.RouteStops.ToList();
+                List<Routes> apiRoute = new List<Routes>();
+                for (int i = 0; i < routes.Count; i++)
+                {
+                    if (!alreadySharedRoutes.Contains(routes[i].id))
+                    {
+                        List<ApiStops> apiStops = new List<ApiStops>();
+                        var stopsInRoute = routeStop.Where(rs => rs.route_id == routes[i].id).Select(rs => new
+                        {
+                            StopId = rs.stop_id,
+                            StopTiming = rs.stoptiming,
+                        }).ToList();
+                        for (int j = 0; j < stopsInRoute.Count; j++)
+                        {
+                            ApiStops apiStop = new ApiStops();
+                            apiStop.Id = Convert.ToInt32(stopsInRoute[j].StopId);
+                            apiStop.Name = stops.FirstOrDefault(s => s.id == apiStop.Id)?.name;
+                            apiStop.Latitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.latitude;
+                            apiStop.Longitude = stops.FirstOrDefault(s => s.id == apiStop.Id)?.longitude;
+                            apiStops.Add(apiStop);
+                        }
+                        Routes route = new Routes
+                        {
+                            RouteId = routes[i].id,
+                            RouteTitle = routes[i].Title,
+                            Stops = apiStops,
+                        };
+                        apiRoute.Add(route);
+                    }
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, apiRoute);
+            }
+            catch
+            {
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error!");
+            }
+
+        }
     }
 }
