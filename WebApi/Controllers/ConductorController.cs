@@ -80,7 +80,7 @@ namespace WebApi.Controllers
                     List<int> listOfIds = (from u in db.Users
                                            join s in db.Students on u.id equals s.user_id
                                            join f in db.FavouriteStops on s.id equals f.student_id
-                                           where f.stop_id == nextStopDetails.Id && u.organization_id == Convert.ToInt32(OrganizationId)
+                                           where f.stop_id == nextStopDetails.Id && u.organization_id == OrganizationId
                                            select u.id).ToList();
                     UsersController usersController = new UsersController();
                     for (int i = 0; i < listOfIds.Count; i++)
@@ -449,6 +449,7 @@ namespace WebApi.Controllers
                 var startedRouteId = db.Starts.Where(s => s.bus_id == busId && s.date == DateTime.Today).OrderByDescending(s => s.id).FirstOrDefault().route_id;
                 if (startedRouteId != null)
                 {
+                    UsersController usersController = new UsersController();
                     var busOrganizationId = db.Buses.Where(b => b.id == busId).Select(b => b.organization_id).FirstOrDefault();
                     var studentOrganizationId = (from u in db.Users join s in db.Students on u.id equals s.user_id where s.pass_id == passId select u.organization_id).FirstOrDefault();
                     var sharedRouteChecher = db.RouteSharings.Where(rs => rs.organization1_id == busOrganizationId && rs.organization2_id == studentOrganizationId && rs.route_id == startedRouteId && rs.Status == "Accepted").Count();
@@ -480,39 +481,43 @@ namespace WebApi.Controllers
                                 route_id = startedRouteId,
                                 stop_id = db.Reaches.Where(r => r.bus_id == busId && r.date == DateTime.Today).OrderByDescending(r => r.id).FirstOrDefault().stop_id,
                             };
-                            if (travelRecordCount == 0)
+                            string stopName = "Uni";
+                            if (travel.stop_id != null)
+                            {
+                                stopName = db.Stops.Where(s => s.id == travel.stop_id).Select(s => s.name).FirstOrDefault();
+                            }
+                            if (travelRecordCount == 0 && DateTime.Now.TimeOfDay < DateTime.Parse("16:00:00").TimeOfDay)
                             {
                                 travel.type = "pickup_checkin";
                                 notificationType = "Check In!";
-                                notificationDescription = "Checked-In to Bus No " + busId + " following Route No " + travel.route_id;
+                                notificationDescription = "Checked-In to Bus No " + busId + " following Route No " + travel.route_id + " at " + stopName;
                                 passDetails.remainingjourneys--;
                             }
-                            else if (travelRecordCount == 1)
+                            else if (travelRecordCount == 1 && DateTime.Now.TimeOfDay < DateTime.Parse("16:00:00").TimeOfDay)
                             {
                                 travel.type = "pickup_checkout";
                                 notificationType = "Check Out!";
-                                notificationDescription = "Checked-Out of Bus No " + busId + " following Route No " + travel.route_id;
+                                notificationDescription = "Checked-Out of Bus No " + busId + " following Route No " + travel.route_id + " at " + stopName;
                                 if (passDetails.remainingjourneys == 0)
                                     passDetails.status = "In-Active";
                             }
-                            else if (travelRecordCount == 2)
+                            else if (travelRecordCount == 2 || (travelRecordCount == 0 && DateTime.Now.TimeOfDay >= DateTime.Parse("16:00:00").TimeOfDay))
                             {
                                 travel.type = "dropoff_checkin";
                                 notificationType = "Check In!";
-                                notificationDescription = "Checked-In to Bus No " + busId + " following Route No " + travel.route_id;
+                                notificationDescription = "Checked-In to Bus No " + busId + " following Route No " + travel.route_id + " at " + stopName;
                                 passDetails.remainingjourneys--;
                             }
-                            else if (travelRecordCount == 3)
+                            else if (travelRecordCount == 3 || (travelRecordCount == 1 && DateTime.Now.TimeOfDay >= DateTime.Parse("16:00:00").TimeOfDay))
                             {
                                 travel.type = "dropoff_checkout";
                                 notificationType = "Check Out!";
-                                notificationDescription = "Checked-Out of Bus No " + busId + " following Route No " + travel.route_id;
+                                notificationDescription = "Checked-Out of Bus No " + busId + " following Route No " + travel.route_id + " at " + stopName;
                                 if (passDetails.remainingjourneys == 0)
                                     passDetails.status = "In-Active";
                             }
                             db.Travels.Add(travel);
                             db.SaveChanges();
-                            UsersController usersController = new UsersController();
                             usersController.LocalNotifyUser(Convert.ToInt32(studentDetails.user_id), notificationType, notificationDescription);
                             int parentUserId = Convert.ToInt32(db.Parents.Where(p => p.id == studentDetails.parent_id).Select(p => p.user_id).FirstOrDefault());
                             usersController.LocalNotifyUser(parentUserId, notificationType, studentDetails.name + " " + notificationDescription);
