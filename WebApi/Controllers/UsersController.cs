@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using WebApi.Models;
 
@@ -72,21 +73,46 @@ namespace WebApi.Controllers
         //}
 
         [HttpPost]
-        public HttpResponseMessage InsertStudent(ApiStudent student)
+        public HttpResponseMessage InsertStudent()
         {
             try
             {
+                var request = System.Web.HttpContext.Current.Request;
+                if (request == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Request is null");
+                }
+
+                string name = request["Name"];
+                string gender = request["Gender"];
+                string regNo = request["RegNo"];
+                string contact = request["Contact"];
+                string parentId = request["ParentId"];
+                string password = request["Password"];
+                string organizationId = request["OrganizationId"];
+                string passExpiry = request["PassExpiry"];
+                string totalJourneys = request["TotalJourneys"];
+
+                var imageFile = request.Files["Image"];
+                if (imageFile == null || imageFile.ContentLength == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Image file is missing or empty");
+                }
+
+                var path = HttpContext.Current.Server.MapPath("~/Content/Images/" + imageFile.FileName);
+                imageFile.SaveAs(path);
+
                 var nextId = ((int)(db.Database.SqlQuery<decimal>("SELECT IDENT_CURRENT('Users')").Single())) + 1;
-                var temp = student.Name.Split(' ');
-                student.UserName = temp[0].ToLower() + "." + nextId + "@BPQS.com";
-                var existingStudent = db.Users.FirstOrDefault(u => u.username == student.UserName);
-                if (existingStudent == null)
+                var temp = name.Split(' ');
+                var userName = temp[0].ToLower() + "." + nextId + "@BPQS.com";
+                var existingUser = db.Users.FirstOrDefault(u => u.username == userName);
+                if (existingUser == null)
                 {
                     User newUser = new User
                     {
-                        username = student.UserName,
-                        password = student.Password,
-                        organization_id = student.OrganizationId,
+                        username = userName,
+                        password = password,
+                        organization_id = int.Parse(organizationId),
                         role = "Student",
                     };
                     db.Users.Add(newUser);
@@ -95,30 +121,34 @@ namespace WebApi.Controllers
                     Pass newPass = new Pass
                     {
                         status = "Active",
-                        passexpiry = DateTime.Parse(student.PassExpiry),
-                        totaljourneys = student.TotalJourneys,
-                        remainingjourneys = student.TotalJourneys
+                        passexpiry = DateTime.Parse(passExpiry),
+                        totaljourneys = int.Parse(totalJourneys),
+                        remainingjourneys = int.Parse(totalJourneys)
                     };
                     db.Passes.Add(newPass);
                     db.SaveChanges();
+
                     Student newStudent = new Student
                     {
-                        name = student.Name,
-                        gender = student.Gender,
-                        regno = student.RegNo,
-                        contact = student.Contact,
-                        parent_id = student.ParentId,
+                        name = name,
+                        gender = gender,
+                        regno = regNo,
+                        contact = contact,
+                        parent_id = int.Parse(parentId),
                         user_id = newUser.id,
                         pass_id = newPass.id,
+                        image = imageFile.FileName
                     };
                     db.Students.Add(newStudent);
                     db.SaveChanges();
-                    var admins = db.Users.Where(u => u.organization_id == student.OrganizationId && u.role == "Admin").Select(u => u.id).ToList();
+                    int orgId = int.Parse(organizationId);
+                    var admins = db.Users.Where(u => u.organization_id == orgId && u.role == "Admin").Select(u => u.id).ToList();
                     for (int i = 0; i < admins.Count; i++)
                     {
-                        string discription = "Username: " + newUser.username + "\nPassword: " + newUser.password;
-                        LocalNotifyUser(admins[i], "New User Added!", discription);
+                        string description = "Username: " + newUser.username + "\nPassword: " + newUser.password;
+                        LocalNotifyUser(admins[i], "New User Added!", description);
                     }
+
                     return Request.CreateResponse(HttpStatusCode.OK, "Student Inserted Successfully");
                 }
                 else
@@ -126,9 +156,9 @@ namespace WebApi.Controllers
                     return Request.CreateResponse(HttpStatusCode.Conflict, "Username Already Taken!");
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error Inserting Student");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
         [HttpPost]

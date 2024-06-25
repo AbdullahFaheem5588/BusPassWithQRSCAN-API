@@ -16,13 +16,59 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"Name\": \"Ahsan Yaseen\",\r\n  \"Gender\": \"Male\",\r\n  \"RegNo\": \"2020-Arid-1234\",\r\n  \"Contact\": \"03311234567\",\r\n  \"Password\": \"123\",\r\n  \"PassExpiry\": \"2024-01-15\",\r\n  \"TotalJourneys\": 50,\r\n  \"ParentId\": 1,\r\n  \"OrganizationId\" : 1\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Name",
+									"value": "Abdullah Faheem",
+									"type": "text"
+								},
+								{
+									"key": "Gender",
+									"value": "Male",
+									"type": "text"
+								},
+								{
+									"key": "RegNo",
+									"value": "2020-Arid-3587",
+									"type": "text"
+								},
+								{
+									"key": "Contact",
+									"value": "03345207788",
+									"type": "text"
+								},
+								{
+									"key": "ParentId",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "Password",
+									"value": "123",
+									"type": "text"
+								},
+								{
+									"key": "OrganizationId",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "PassExpiry",
+									"value": "1/1/2025",
+									"type": "text"
+								},
+								{
+									"key": "TotalJourneys",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "Image",
+									"type": "file",
+									"src": "/C:/Users/abdul/OneDrive/Pictures/My_Pic.jpg"
 								}
-							}
+							]
 						},
 						"url": {
 							"raw": "http://localhost/WebApi/api/Users/InsertStudent",
@@ -1037,7 +1083,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost/WebApi/api/Conductor/ScanQrCode?passId=2&busId=1",
+							"raw": "http://localhost/WebApi/api/Conductor/ScanQrCode?passId=21&busId=1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1051,7 +1097,7 @@
 							"query": [
 								{
 									"key": "passId",
-									"value": "2"
+									"value": "21"
 								},
 								{
 									"key": "busId",

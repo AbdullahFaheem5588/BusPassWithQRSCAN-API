@@ -1,6 +1,6 @@
 create database BusPassWithQRScanuse BusPassWithQRScancreate table Organizations(id int not null identity(1,1) Primary key,name varchar(200),
 latitude varchar(max),
-longitude varchar(max),)create table Users(id int not null identity(1,1) Primary key,username varchar(100),password varchar(100),role varchar(50),organization_id int,Foreign key(organization_id) references Organizations(id))create table Parent(id int not null identity(1,1) primary key,name varchar(100),contact varchar(80),user_id int,Foreign key(user_id) references Users(id))create table Pass(id int not null identity(1,1) Primary key,status varchar(10),passexpiry date,totaljourneys int,remainingjourneys int,)create table Student(id int not null identity(1,1) primary key,name varchar(100),gender varchar(50),regno varchar(100),contact varchar(80),parent_id int,user_id int,pass_id int,Foreign key(user_id) references Users(id),Foreign key(parent_id) references Parent(id),Foreign key(pass_id) references Pass(id))create table Conductor(
+longitude varchar(max),)create table Users(id int not null identity(1,1) Primary key,username varchar(100),password varchar(100),role varchar(50),organization_id int,Foreign key(organization_id) references Organizations(id))create table Parent(id int not null identity(1,1) primary key,name varchar(100),contact varchar(80),user_id int,Foreign key(user_id) references Users(id))create table Pass(id int not null identity(1,1) Primary key,status varchar(10),passexpiry date,totaljourneys int,remainingjourneys int,)create table Student(id int not null identity(1,1) primary key,name varchar(100),gender varchar(50),regno varchar(100),contact varchar(80),parent_id int,user_id int,pass_id int,image varchar(Max),Foreign key(user_id) references Users(id),Foreign key(parent_id) references Parent(id),Foreign key(pass_id) references Pass(id))create table Conductor(
 id int not null identity(1,1) primary key,
 name varchar(100),
 contact varchar(80),
@@ -173,7 +173,7 @@ SELECT COUNT(*) FROM Reaches WHERE date = '2024-05-25' AND bus_id = 1 AND time >
 Select Top(1) s.route_id from Starts s inner join Bus b on b.id = s.bus_id where s.date = '2024-05-25' AND b.conductor_id = 1 order by s.time desc
 
 delete from Reaches where id > 168
-delete from Notifications where id > 18485
+delete from Notifications where id > 19524
 delete from TracksLocation where id > 2129
 delete from Starts where id > 72
 delete from Travels where id > 27

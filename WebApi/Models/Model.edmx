@@ -159,6 +159,7 @@
           <Property Name="parent_id" Type="int" />
           <Property Name="user_id" Type="int" />
           <Property Name="pass_id" Type="int" />
+          <Property Name="image" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="TracksLocation">
           <Key>
@@ -934,6 +935,7 @@
           <Property Name="parent_id" Type="Int32" />
           <Property Name="user_id" Type="Int32" />
           <Property Name="pass_id" Type="Int32" />
+          <Property Name="image" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="FavouriteStops" Relationship="Self.FK__Favourite__stude__4D94879B" FromRole="Student" ToRole="FavouriteStops" />
           <NavigationProperty Name="Parent" Relationship="Self.FK__Student__parent___3E52440B" FromRole="Student" ToRole="Parent" />
           <NavigationProperty Name="Pass" Relationship="Self.FK__Student__pass_id__3F466844" FromRole="Student" ToRole="Pass" />
@@ -1696,6 +1698,7 @@
                 <ScalarProperty Name="parent_id" ColumnName="parent_id" />
                 <ScalarProperty Name="user_id" ColumnName="user_id" />
                 <ScalarProperty Name="pass_id" ColumnName="pass_id" />
+                <ScalarProperty Name="image" ColumnName="image" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

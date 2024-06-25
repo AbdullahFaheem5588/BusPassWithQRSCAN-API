@@ -468,6 +468,7 @@ namespace WebApi.Controllers
                         apiStudent.PassId = Convert.ToInt32(studentDetails.pass_id);
                         apiStudent.PassExpiry = passDetails.passexpiry.ToString();
                         apiStudent.PassStatus = passDetails.status;
+                        apiStudent.Image = studentDetails.image;
 
                         if (passDetails.status == "Active")
                         {

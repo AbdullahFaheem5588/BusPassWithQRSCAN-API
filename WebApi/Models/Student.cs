@@ -29,6 +29,7 @@ namespace WebApi.Models
         public Nullable<int> parent_id { get; set; }
         public Nullable<int> user_id { get; set; }
         public Nullable<int> pass_id { get; set; }
+        public string image { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FavouriteStop> FavouriteStops { get; set; }

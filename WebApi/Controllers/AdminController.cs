@@ -609,7 +609,7 @@ namespace WebApi.Controllers
                     UsersController usersController = new UsersController();
                     for (int i = 0; i < admins.Count; i++)
                     {
-                        usersController.LocalNotifyUser(Convert.ToInt32(admins[i]), "Route Sharing Request!", db.Organizations.Where(o => o.id == OrganizationId).Select(o => o.name).FirstOrDefault() + " has requwsted you to Share your Route No: " + route.id + " with them.");
+                        usersController.LocalNotifyUser(Convert.ToInt32(admins[i]), "Route Sharing Request!", db.Organizations.Where(o => o.id == OrganizationId).Select(o => o.name).FirstOrDefault() + " has requested you to Share your Route No: " + route.id + " with them.");
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, "Request Sent!");
                 }

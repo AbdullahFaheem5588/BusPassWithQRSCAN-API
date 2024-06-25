@@ -72,6 +72,7 @@ namespace WebApi.Models
         public int PassId { get; set; }
         public Location OrganizationCords { get; set; }
         public string OrganizationName { get; set; }
+        public string Image { get; set; }
     }
     public class ApiSuperAdmin
     {
