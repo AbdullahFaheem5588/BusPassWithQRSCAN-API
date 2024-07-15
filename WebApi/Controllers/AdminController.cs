@@ -31,24 +31,14 @@ namespace WebApi.Controllers
 
                     int bookedSeats = 0;
 
-                    if (startCount == 1)
+                    if (startCount > 0)
                     {
                         bookedSeats = ((from t in db.Travels
                                         where t.bus_id == busId && t.date == DateTime.Today
-                                        && t.type.Contains("pickup_checkin")
+                                        && (t.type.Contains("pickup_checkin") || t.type.Contains("dropoff_checkin"))
                                         select t).Count()) - ((from t in db.Travels
                                                                where t.bus_id == busId && t.date == DateTime.Today
-                                                               && t.type.Contains("pickup_checkout")
-                                                               select t).Count());
-                    }
-                    else if (startCount == 2)
-                    {
-                        bookedSeats = ((from t in db.Travels
-                                        where t.bus_id == busId && t.date == DateTime.Today
-                                        && t.type.Contains("dropoff_checkin")
-                                        select t).Count()) - ((from t in db.Travels
-                                                               where t.bus_id == busId && t.date == DateTime.Today
-                                                               && t.type.Contains("dropoff_checkout")
+                                                               && (t.type.Contains("pickup_checkout") || t.type.Contains("dropoff_checkout"))
                                                                select t).Count());
                     }
 
@@ -193,6 +183,7 @@ namespace WebApi.Controllers
                     regno = busDetails.RegNo,
                     totalSeats = busDetails.TotalSeats,
                     conductor_id = busDetails.Conductor.Id,
+                    organization_id = busDetails.OrganizationId,
                 };
                 db.Buses.Add(bus);
                 for (int i = 0; i < busDetails.Routes.Count; i++)
@@ -617,6 +608,38 @@ namespace WebApi.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, "No Such Route Found!");
                 }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet]
+        public HttpResponseMessage GetRouteRaking(int OrganizationId)
+        {
+            try
+            {
+                var routes = db.Routes.Where(r => r.organization_id == OrganizationId).ToList();
+                List<RouteRaking> routeRakings = new List<RouteRaking>();
+                for (int i = 0; i < routes.Count; i++)
+                {
+                    RouteRaking routeRaking = new RouteRaking();
+                    routeRaking.RouteId = Convert.ToInt32(routes[i].id);
+                    var travels = db.Travels.Where(t => t.date == DateTime.Today && t.route_id == routeRaking.RouteId && (t.type == "pickup_checkin" || t.type == "dropoff_checkin")).FirstOrDefault();
+                    if (travels != null)
+                    {
+                        routeRaking.BusId = Convert.ToInt32(travels.bus_id);
+                        if (travels.type == "pickup_checkin")
+                            routeRaking.TravelType = "Pickup";
+                        else
+                            routeRaking.TravelType = "Dropoff";
+                        string type = travels.type;
+                        routeRaking.MaxPassengers = Convert.ToInt32(db.Travels.Where(t => t.date == DateTime.Today && t.route_id == routeRaking.RouteId && t.bus_id == routeRaking.BusId && t.type == type).Count());
+                        routeRakings.Add(routeRaking);
+                    }
+                }
+                routeRakings.OrderByDescending(rs => rs.MaxPassengers);
+                return Request.CreateResponse(HttpStatusCode.OK, routeRakings);
             }
             catch (Exception ex)
             {

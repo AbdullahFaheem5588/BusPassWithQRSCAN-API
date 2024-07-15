@@ -172,15 +172,16 @@ SELECT COUNT(*) FROM Reaches WHERE date = '2024-05-25' AND bus_id = 1 AND time >
 
 Select Top(1) s.route_id from Starts s inner join Bus b on b.id = s.bus_id where s.date = '2024-05-25' AND b.conductor_id = 1 order by s.time desc
 
-delete from Reaches where id > 168
-delete from Notifications where id > 19524
+delete from Reaches where id > 1180
+delete from Notifications where id > 19537
 delete from TracksLocation where id > 2129
 delete from Starts where id > 72
-delete from Travels where id > 27
-delete from Organizations where id > 25
+delete from Travels where id > 9
 
 SELECT u.id
 FROM Users u
 JOIN Student s ON u.id = s.user_id
 JOIN FavouriteStops f ON s.id = f.student_id
 WHERE f.stop_id = 1;
+
+Select * from Travels

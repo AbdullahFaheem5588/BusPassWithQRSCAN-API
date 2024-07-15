@@ -103,7 +103,17 @@ namespace WebApi.Models
         public int BusId { get; set; }
         public int RouteId { get; set; }
         public string RouteTitle { get; set; }
+        public int TotalSeats { get; set; }
+        public int Passengers { get; set; }
+        public List<PassengersDetails> PassengersDetails { get; set; }
         public Location Cords { get; set; }
+    }
+    public class PassengersDetails
+    {
+        public string Name { get; set; }
+        public int PassId { get; set; }
+        public string RegNo { get; set; }
+        public string StopName { get; set; }
     }
     public class ApiNotification
     {
@@ -232,5 +242,12 @@ namespace WebApi.Models
         public string Description { get; set; }
         public string Status { get; set; }
         public bool RequestedByUser { get; set; }
+    }
+    public class RouteRaking
+    {
+        public int BusId { get; set; }
+        public int RouteId { get; set; }
+        public int MaxPassengers { get; set; }
+        public string TravelType { get; set; }
     }
 }
